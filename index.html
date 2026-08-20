@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TempNexus · Temporary Email</title>
+    <title>TempNexus · Admin Control Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -23,36 +23,34 @@
             margin: 0;
         }
 
-        .nexus-card {
-            max-width: 1000px;
+        .admin-container {
+            max-width: 1200px;
             width: 100%;
-            background: rgba(22, 28, 46, 0.7);
+            background: rgba(22, 28, 46, 0.85);
             backdrop-filter: blur(12px) saturate(180%);
             -webkit-backdrop-filter: blur(12px) saturate(180%);
             border-radius: 48px;
-            padding: 2.5rem 2.2rem;
+            padding: 2.5rem;
             box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.04);
-            transition: all 0.2s ease;
         }
 
-        /* Header with logo */
-        .brand {
+        .admin-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
             flex-wrap: wrap;
-            margin-bottom: 2.2rem;
-            gap: 0.8rem;
+            gap: 1rem;
         }
 
-        .brand-left {
+        .admin-header .brand {
             display: flex;
             align-items: center;
             gap: 16px;
         }
 
-        .brand-logo {
+        .admin-header .brand-logo {
             width: 48px;
             height: 48px;
             border-radius: 14px;
@@ -63,130 +61,276 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
 
-        .brand-logo img {
+        .admin-header .brand-logo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             border-radius: 10px;
-            display: block;
         }
 
-        .brand h1 {
-            font-size: 2.4rem;
+        .admin-header h1 {
+            font-size: 2rem;
             font-weight: 600;
             background: linear-gradient(135deg, #d6e2ff, #a5c0ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.02em;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .brand h1 i {
-            font-size: 2.2rem;
-            color: #7a9cff;
-            filter: drop-shadow(0 0 8px rgba(90, 150, 255, 0.3));
+        .admin-header h1 i {
+            color: #5f84ff;
+            font-size: 1.8rem;
         }
 
-        .badge {
-            background: rgba(70, 130, 255, 0.15);
+        .admin-header .status-badge {
+            background: rgba(43, 158, 94, 0.2);
             padding: 0.5rem 1.2rem;
             border-radius: 60px;
-            border: 1px solid rgba(70, 130, 255, 0.2);
-            color: #b3ccff;
+            border: 1px solid rgba(63, 199, 122, 0.2);
+            color: #3fc77a;
             font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .badge i {
-            color: #5f8cff;
+        .admin-header .status-badge i {
+            color: #3fc77a;
         }
 
-        .admin-link {
+        /* Login Section */
+        .login-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            gap: 2rem;
+        }
+
+        .login-section h2 {
+            color: #d6e2ff;
+            font-size: 2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .login-section h2 i {
+            color: #5f84ff;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-form input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #2a3a66;
+            border-radius: 40px;
+            padding: 0.9rem 1.4rem;
+            color: #d3defa;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.15s;
+        }
+
+        .login-form input:focus {
+            border-color: #5f84ff;
+            box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.15);
+        }
+
+        .login-form .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.9rem;
+        }
+
+        .login-error {
+            color: #faaab5;
+            background: rgba(220, 60, 80, 0.15);
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #b44b5a;
+            font-size: 0.9rem;
+            display: none;
+            text-align: center;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(12, 17, 29, 0.6);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            transition: 0.15s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(95, 132, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .stat-card .label {
             color: #7f97d0;
             font-size: 0.8rem;
-            text-decoration: none;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .admin-link:hover {
-            background: rgba(70, 130, 255, 0.1);
-            border-color: #5f84ff;
-            color: #d6e2ff;
-        }
-
-        /* Generator */
-        .generator {
-            background: rgba(12, 17, 29, 0.6);
-            border-radius: 60px;
-            padding: 0.6rem 0.6rem 0.6rem 1.8rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            margin-bottom: 2.5rem;
-            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .generator .email-preview {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            color: #d3defa;
-            font-size: 1rem;
-            font-weight: 450;
-            letter-spacing: 0.3px;
-            flex: 1 1 200px;
-        }
-
-        .generator .email-preview i {
-            color: #6d8eff;
-            font-size: 1.2rem;
-            margin-right: 6px;
-        }
-
-        .generator .email-preview span {
-            background: #1a2340;
-            padding: 0.2rem 1rem;
-            border-radius: 40px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.95rem;
-            color: #b8cbff;
-            border: 1px solid #2a3a66;
-            letter-spacing: 0.2px;
-        }
-
-        .gen-actions {
-            display: flex;
-            flex-wrap: wrap;
             gap: 8px;
+        }
+
+        .stat-card .label i {
+            color: #5f84ff;
+        }
+
+        .stat-card .value {
+            color: #d6e2ff;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .stat-card .change {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            color: #6a80b3;
+        }
+
+        .stat-card .change.positive {
+            color: #3fc77a;
+        }
+
+        .stat-card .change.negative {
+            color: #faaab5;
+        }
+
+        .table-container {
+            background: rgba(12, 17, 29, 0.4);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .table-header h3 {
+            color: #d6e2ff;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-header h3 i {
+            color: #5f84ff;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .table-controls input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a3a66;
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            color: #d3defa;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 180px;
+        }
+
+        .table-controls input:focus {
+            border-color: #5f84ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #d3defa;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.8rem 0.6rem;
+            color: #7f97d0;
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        td {
+            padding: 0.8rem 0.6rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background: rgba(26, 38, 75, 0.3);
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: rgba(43, 158, 94, 0.25);
+            color: #3fc77a;
+            border: 1px solid rgba(63, 199, 122, 0.2);
+        }
+
+        .status-badge.banned {
+            background: rgba(220, 60, 80, 0.2);
+            color: #faaab5;
+            border: 1px solid rgba(220, 60, 80, 0.2);
         }
 
         .btn {
             background: transparent;
             border: none;
-            padding: 0.7rem 1.4rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 40px;
             font-weight: 550;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -205,36 +349,9 @@
             box-shadow: 0 8px 18px -6px #1f3a9e;
         }
 
-        .btn-primary i {
-            color: white;
-        }
-
         .btn-primary:hover {
             transform: scale(1.02);
             background: linear-gradient(145deg, #5a7eff, #3b5ee0);
-            box-shadow: 0 10px 22px -8px #2850c0;
-        }
-
-        .btn-outline {
-            border: 1px solid #314675;
-            background: rgba(20, 30, 60, 0.3);
-        }
-
-        .btn-outline:hover {
-            background: #2d3f6e;
-            border-color: #5b7ed0;
-        }
-
-        .btn-success {
-            background: linear-gradient(145deg, #2b9e5e, #1e7a47);
-            border: 1px solid #3fc77a;
-            color: white;
-            box-shadow: 0 8px 18px -6px #0f5a32;
-        }
-
-        .btn-success:hover {
-            transform: scale(1.02);
-            background: linear-gradient(145deg, #36b86d, #258f51);
         }
 
         .btn-danger {
@@ -248,262 +365,73 @@
             color: white;
         }
 
-        /* Stats */
-        .stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 0.8rem 1.5rem;
-            margin-bottom: 2.2rem;
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.8rem 1.4rem;
-            border-radius: 100px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.02);
+        .btn-success {
+            background: rgba(43, 158, 94, 0.2);
+            border: 1px solid rgba(63, 199, 122, 0.2);
+            color: #3fc77a;
         }
 
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #b2c9f5;
-            font-size: 0.9rem;
+        .btn-success:hover {
+            background: #1e7a47;
+            color: white;
         }
 
-        .stat-item i {
-            color: #5d84f0;
-            width: 1.2rem;
-        }
-
-        .stat-item strong {
-            color: #e8f0ff;
-            font-weight: 600;
-        }
-
-        /* Compose */
-        .compose-section {
-            background: rgba(12, 17, 29, 0.4);
-            border-radius: 30px;
-            padding: 1.2rem 1.6rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(4px);
-        }
-
-        .compose-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #b8ccff;
-            font-weight: 500;
-            margin-bottom: 0.8rem;
-        }
-
-        .compose-header i {
-            color: #5f84ff;
-            font-size: 1.2rem;
-        }
-
-        .compose-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .compose-form input,
-        .compose-form textarea {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid #2a3a66;
-            border-radius: 40px;
-            padding: 0.6rem 1.2rem;
-            color: #d3defa;
-            font-size: 0.9rem;
-            outline: none;
-            transition: 0.15s;
-            flex: 1 1 160px;
-            min-width: 120px;
-        }
-
-        .compose-form input:focus,
-        .compose-form textarea:focus {
-            border-color: #5f84ff;
-            box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.15);
-        }
-
-        .compose-form textarea {
-            flex: 2 1 260px;
-            border-radius: 24px;
-            resize: vertical;
-            min-height: 44px;
-            font-family: inherit;
-        }
-
-        .compose-form .btn {
-            flex-shrink: 0;
-        }
-
-        /* Mail list */
-        .mail-section {
-            margin-top: 0.2rem;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            color: #b8ccff;
-            font-weight: 450;
-            letter-spacing: 0.3px;
-            font-size: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            padding-bottom: 0.8rem;
-        }
-
-        .section-title i {
-            color: #5f84ff;
-            margin-right: 8px;
-        }
-
-        .mail-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 380px;
-            overflow-y: auto;
-            padding-right: 4px;
-            scrollbar-width: thin;
-            scrollbar-color: #3f5a9e #141c30;
-        }
-
-        .mail-list::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .mail-list::-webkit-scrollbar-track {
-            background: #141c30;
-            border-radius: 12px;
-        }
-
-        .mail-list::-webkit-scrollbar-thumb {
-            background: #3f5a9e;
-            border-radius: 12px;
-        }
-
-        .mail-item {
-            background: rgba(16, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
-            border-radius: 24px;
-            padding: 1rem 1.5rem;
-            border-left: 4px solid #3f6eff;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            transition: 0.15s;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        .mail-item:hover {
-            background: #1a264b;
-            border-left-color: #7a9aff;
-            transform: translateX(4px);
-        }
-
-        .mail-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 2 1 200px;
-        }
-
-        .mail-info .from {
-            font-weight: 600;
-            color: #d8e4ff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .mail-info .from i {
-            color: #7092ff;
-            font-size: 0.8rem;
-        }
-
-        .mail-info .subject {
-            color: #b2c5f0;
-            font-size: 0.9rem;
-        }
-
-        .mail-info .date {
-            color: #6a80b3;
+        .btn-sm {
+            padding: 0.3rem 0.8rem;
             font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .mail-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .mail-actions .btn-icon {
-            background: transparent;
-            border: none;
-            color: #7f97d0;
-            padding: 6px 12px;
             border-radius: 30px;
-            transition: 0.1s;
-            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.15s;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            border: 1px solid transparent;
+            gap: 4px;
         }
 
-        .mail-actions .btn-icon:hover {
+        .btn-sm.ban {
+            background: rgba(220, 60, 80, 0.2);
+            color: #faaab5;
+            border: 1px solid rgba(220, 60, 80, 0.2);
+        }
+
+        .btn-sm.ban:hover {
+            background: #832f3f;
+            color: white;
+        }
+
+        .btn-sm.unban {
+            background: rgba(43, 158, 94, 0.2);
+            color: #3fc77a;
+            border: 1px solid rgba(63, 199, 122, 0.2);
+        }
+
+        .btn-sm.unban:hover {
+            background: #1e7a47;
+            color: white;
+        }
+
+        .btn-sm.logout {
+            background: rgba(220, 60, 80, 0.15);
+            color: #faaab5;
+            border: 1px solid #b44b5a;
+        }
+
+        .btn-sm.logout:hover {
+            background: #832f3f;
+            color: white;
+        }
+
+        .btn-sm.refresh {
+            background: rgba(70, 130, 255, 0.15);
+            color: #7f97d0;
+            border: 1px solid rgba(70, 130, 255, 0.2);
+        }
+
+        .btn-sm.refresh:hover {
             background: #2b3d6e;
-            color: #d4e2ff;
-            border-color: #4560b0;
+            color: white;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 2.8rem 1rem;
-            color: #5d73a8;
-        }
-
-        .empty-state i {
-            font-size: 3.2rem;
-            margin-bottom: 1rem;
-            opacity: 0.4;
-        }
-
-        /* Footer */
-        .footnote {
-            margin-top: 2.2rem;
-            color: #4b618a;
-            font-size: 0.75rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-            padding-top: 1.5rem;
-            letter-spacing: 0.3px;
-            display: flex;
-            justify-content: center;
-            gap: 1.8rem;
-            flex-wrap: wrap;
-        }
-
-        .footnote i {
-            margin-right: 5px;
-            color: #5f7ed0;
-        }
-
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -536,219 +464,137 @@
             color: #5f84ff;
         }
 
-        /* Ban overlay */
-        .ban-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(12px);
-        }
-
-        .ban-overlay.show {
-            display: flex;
-        }
-
-        .ban-box {
-            background: rgba(22, 28, 46, 0.95);
-            border-radius: 48px;
-            padding: 3rem 2.5rem;
-            max-width: 480px;
+        .empty-state {
             text-align: center;
-            border: 2px solid #b44b5a;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            padding: 2rem;
+            color: #5d73a8;
         }
 
-        .ban-box i {
-            font-size: 4rem;
-            color: #faaab5;
-            margin-bottom: 1.2rem;
-        }
-
-        .ban-box h2 {
-            color: #faaab5;
-            font-size: 2rem;
+        .empty-state i {
+            font-size: 2.5rem;
             margin-bottom: 0.8rem;
+            opacity: 0.4;
         }
 
-        .ban-box p {
-            color: #b2c9f5;
-            line-height: 1.6;
-            font-size: 1rem;
+        .site-link {
+            color: #5f84ff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: 0.15s;
+        }
+
+        .site-link:hover {
+            color: #7a9cff;
+            text-decoration: underline;
         }
 
         @media (max-width: 680px) {
-            .nexus-card { padding: 1.8rem 1.2rem; }
-            .brand h1 { font-size: 1.8rem; }
-            .brand-logo { width: 40px; height: 40px; }
-            .generator { padding: 0.8rem; border-radius: 40px; }
-            .generator .email-preview { padding: 0 0.2rem; }
-            .gen-actions .btn { padding: 0.6rem 1rem; font-size: 0.8rem; }
-            .stats { flex-direction: column; align-items: flex-start; border-radius: 30px; }
-            .compose-form input, .compose-form textarea { flex: 1 1 100%; }
+            .admin-container { padding: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .table-controls input { min-width: 100%; }
+            .admin-header h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- BAN OVERLAY -->
-<div id="banOverlay" class="ban-overlay">
-    <div class="ban-box">
-        <i class="fas fa-ban"></i>
-        <h2>⛔ Access Denied</h2>
-        <p>Your IP address has been banned from TempNexus for violating our terms of service.</p>
-        <p style="margin-top: 12px; color: #6a80b3; font-size: 0.85rem;">If you believe this is a mistake, please contact support.</p>
-    </div>
-</div>
-
-<div class="nexus-card" id="app">
-    <!-- Header with logo & admin link -->
-    <div class="brand">
-        <div class="brand-left">
+<div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="brand">
             <div class="brand-logo">
-                <img src="https://www.image2url.com/r2/default/images/1787220047845-28f1c7c8-6565-4952-a936-2640fa9b7408.png" alt="TempNexus logo" />
+                <img src="https://www.image2url.com/r2/default/images/1787220047845-28f1c7c8-6565-4952-a936-2640fa9b7408.png" alt="TempNexus" />
             </div>
-            <h1><i class="fas fa-envelope-open-text"></i> TempNexus</h1>
+            <h1><i class="fas fa-crown"></i> Admin Control</h1>
         </div>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <div class="badge"><i class="fas fa-shield-alt"></i> 15d auto-purge · 1 inbox/user</div>
-            <a href="/admin" class="admin-link" id="adminLink"><i class="fas fa-crown"></i> Admin</a>
+            <a href="https://kco-maile.vercel.app/" target="_blank" class="site-link">
+                <i class="fas fa-external-link-alt"></i> kco-maile.vercel.app
+            </a>
+            <span class="status-badge" id="connectionStatus">
+                <i class="fas fa-circle" style="font-size:0.5rem;"></i> Connected
+            </span>
         </div>
     </div>
 
-    <!-- Generator -->
-    <div class="generator">
-        <div class="email-preview">
-            <i class="fas fa-at"></i>
-            <span id="currentEmailDisplay">loading...</span>
-        </div>
-        <div class="gen-actions">
-            <button class="btn btn-primary" id="newInboxBtn"><i class="fas fa-sync-alt"></i> New inbox</button>
-            <button class="btn btn-outline" id="copyEmailBtn"><i class="fas fa-copy"></i> Copy</button>
-            <button class="btn btn-danger" id="deleteInboxBtn"><i class="fas fa-trash-alt"></i> Delete</button>
-        </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats">
-        <span class="stat-item"><i class="fas fa-inbox"></i> Inbox: <strong id="inboxCountStat">0</strong></span>
-        <span class="stat-item"><i class="fas fa-clock"></i> Expires: <strong id="expiryStat">15d</strong></span>
-        <span class="stat-item"><i class="fas fa-users"></i> Active: <strong id="activeUsersStat">1</strong></span>
-        <span class="stat-item"><i class="fas fa-database"></i> Storage: <strong id="storageStat">0 KB</strong></span>
-    </div>
-
-    <!-- Compose -->
-    <div class="compose-section">
-        <div class="compose-header">
-            <i class="fas fa-paper-plane"></i> Send direct email
-            <span style="font-size:0.75rem; opacity:0.6; margin-left:auto;"><i class="fas fa-lock"></i> via TempNexus</span>
-        </div>
-        <div class="compose-form">
-            <input type="text" id="composeTo" placeholder="recipient@example.com" value="">
-            <input type="text" id="composeSubject" placeholder="Subject" value="">
-            <textarea id="composeBody" placeholder="Message body..." rows="1"></textarea>
-            <button class="btn btn-success" id="sendMailBtn"><i class="fas fa-paper-plane"></i> Send</button>
-        </div>
-    </div>
-
-    <!-- Mail list -->
-    <div class="mail-section">
-        <div class="section-title">
-            <span><i class="fas fa-list-ul"></i> Incoming messages</span>
-            <span style="font-size:0.8rem; opacity:0.6;"><i class="fas fa-rotate-right"></i> real-time</span>
-        </div>
-        <div class="mail-list" id="mailListContainer">
-            <div class="empty-state">
-                <i class="fas fa-mail-bulk"></i>
-                <p>No messages yet · wait for incoming mail</p>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-section">
+        <h2><i class="fas fa-shield-alt"></i> Admin Access</h2>
+        <div class="login-form">
+            <input type="text" id="adminUser" placeholder="Username" value="admin">
+            <input type="password" id="adminPass" placeholder="Password" value="admin123">
+            <div id="loginError" class="login-error">
+                <i class="fas fa-exclamation-triangle"></i> Invalid credentials
             </div>
+            <button class="btn btn-primary" id="loginBtn">
+                <i class="fas fa-lock-open"></i> Enter Admin Panel
+            </button>
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footnote">
-        <span><i class="fas fa-cloud-upload-alt"></i> 100% serverless · Vercel ready</span>
-        <span><i class="fas fa-envelope"></i> mailtracking & instaddr mock</span>
-        <span><i class="fas fa-trash-restore"></i> auto-delete after 15 days</span>
-    </div>
-</div>
-
-<!-- Toast -->
-<div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMessage">Done</span></div>
-
-<!-- Admin Panel (hidden by default, shown via /admin route) -->
-<div id="adminPanelContainer" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;backdrop-filter:blur(12px);padding:2rem;overflow-y:auto;align-items:center;justify-content:center;">
-    <div style="max-width:1100px;width:100%;margin:0 auto;background:rgba(22,28,46,0.95);border-radius:48px;padding:2.5rem;border:1px solid rgba(255,255,255,0.05);position:relative;">
-        <button id="closeAdminBtn" style="position:absolute;top:20px;right:25px;background:rgba(220,60,80,0.15);border:1px solid #b44b5a;color:#faaab5;padding:0.5rem 1rem;border-radius:30px;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;gap:6px;transition:0.15s;">
-            <i class="fas fa-times"></i> Close
-        </button>
-
-        <!-- Admin Login -->
-        <div id="adminLogin" style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:2rem 0;">
-            <h2 style="color:#d6e2ff;font-size:2rem;font-weight:500;display:flex;align-items:center;gap:12px;">
-                <i class="fas fa-shield-alt" style="color:#5f84ff;"></i> Admin Access
-            </h2>
-            <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;">
-                <input type="text" id="adminUser" placeholder="Username" value="admin" style="background:rgba(0,0,0,0.4);border:1px solid #2a3a66;border-radius:40px;padding:0.8rem 1.4rem;color:#d3defa;font-size:0.95rem;outline:none;transition:0.15s;">
-                <input type="password" id="adminPass" placeholder="Password" value="admin123" style="background:rgba(0,0,0,0.4);border:1px solid #2a3a66;border-radius:40px;padding:0.8rem 1.4rem;color:#d3defa;font-size:0.95rem;outline:none;transition:0.15s;">
-                <div id="loginError" style="color:#faaab5;background:rgba(220,60,80,0.15);padding:0.6rem 1.2rem;border-radius:40px;border:1px solid #b44b5a;font-size:0.9rem;display:none;">
-                    <i class="fas fa-exclamation-triangle"></i> Invalid credentials
-                </div>
-                <button class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;padding:0.9rem;">
-                    <i class="fas fa-lock-open"></i> Enter Admin Panel
-                </button>
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-users"></i> Total Users</div>
+                <div class="value" id="totalUsers">0</div>
+                <div class="change" id="userChange">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-envelope"></i> Total Emails</div>
+                <div class="value" id="totalMails">0</div>
+                <div class="change" id="mailChange">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-eye"></i> Active Now</div>
+                <div class="value" id="activeNow">0</div>
+                <div class="change" id="activeChange">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-ban"></i> Banned Users</div>
+                <div class="value" id="bannedUsers">0</div>
+                <div class="change" id="bannedChange">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-clock"></i> Total Visitors</div>
+                <div class="value" id="totalVisitors">0</div>
+                <div class="change" id="visitorChange">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-database"></i> Data Size</div>
+                <div class="value" id="dataSize">0 KB</div>
+                <div class="change" id="sizeChange">—</div>
             </div>
         </div>
 
-        <!-- Admin Dashboard -->
-        <div id="adminPanel" style="display:none;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
-                <h2 style="color:#d6e2ff;font-size:1.8rem;display:flex;align-items:center;gap:12px;">
-                    <i class="fas fa-crown" style="color:#5f84ff;"></i> Admin Dashboard
-                </h2>
-                <button class="btn btn-sm" id="logoutBtn" style="background:rgba(220,60,80,0.15);color:#faaab5;border:1px solid #b44b5a;padding:0.5rem 1.2rem;border-radius:30px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;">
-                <div style="background:rgba(12,17,29,0.6);border-radius:24px;padding:1.2rem 1.5rem;border:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(4px);">
-                    <div style="color:#7f97d0;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;"><i class="fas fa-users"></i> Total Users</div>
-                    <div style="color:#d6e2ff;font-size:2rem;font-weight:600;margin-top:4px;" id="totalUsers">0</div>
-                </div>
-                <div style="background:rgba(12,17,29,0.6);border-radius:24px;padding:1.2rem 1.5rem;border:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(4px);">
-                    <div style="color:#7f97d0;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;"><i class="fas fa-envelope"></i> Total Mails</div>
-                    <div style="color:#d6e2ff;font-size:2rem;font-weight:600;margin-top:4px;" id="totalMails">0</div>
-                </div>
-                <div style="background:rgba(12,17,29,0.6);border-radius:24px;padding:1.2rem 1.5rem;border:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(4px);">
-                    <div style="color:#7f97d0;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;"><i class="fas fa-eye"></i> Active Now</div>
-                    <div style="color:#d6e2ff;font-size:2rem;font-weight:600;margin-top:4px;" id="activeNow">0</div>
-                </div>
-                <div style="background:rgba(12,17,29,0.6);border-radius:24px;padding:1.2rem 1.5rem;border:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(4px);">
-                    <div style="color:#7f97d0;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;"><i class="fas fa-ban"></i> Banned</div>
-                    <div style="color:#d6e2ff;font-size:2rem;font-weight:600;margin-top:4px;" id="bannedUsers">0</div>
+        <!-- User Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3><i class="fas fa-list-ul"></i> User Management</h3>
+                <div class="table-controls">
+                    <input type="text" id="searchInput" placeholder="Search by IP or username...">
+                    <button class="btn-sm refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    <button class="btn-sm logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             </div>
-
-            <div style="background:rgba(12,17,29,0.4);border-radius:24px;padding:1.2rem;border:1px solid rgba(255,255,255,0.04);overflow-x:auto;">
-                <table style="width:100%;border-collapse:collapse;color:#d3defa;">
+            <div style="overflow-x:auto;">
+                <table>
                     <thead>
                         <tr>
-                            <th style="text-align:left;padding:0.8rem 0.6rem;color:#7f97d0;font-weight:500;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);">IP Address</th>
-                            <th style="text-align:left;padding:0.8rem 0.6rem;color:#7f97d0;font-weight:500;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);">Username</th>
-                            <th style="text-align:left;padding:0.8rem 0.6rem;color:#7f97d0;font-weight:500;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);">Mails</th>
-                            <th style="text-align:left;padding:0.8rem 0.6rem;color:#7f97d0;font-weight:500;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);">Status</th>
-                            <th style="text-align:left;padding:0.8rem 0.6rem;color:#7f97d0;font-weight:500;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);">Action</th>
+                            <th>IP Address</th>
+                            <th>Username</th>
+                            <th>Emails</th>
+                            <th>Status</th>
+                            <th>Last Active</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
-                        <tr><td colspan="5" style="text-align:center;color:#5d73a8;padding:2rem;">No users yet</td></tr>
+                        <tr><td colspan="6" style="text-align:center;color:#5d73a8;padding:2rem;">Loading users...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -756,59 +602,50 @@
     </div>
 </div>
 
+<!-- Toast -->
+<div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMessage">Done</span></div>
+
 <script>
     (function() {
         "use strict";
 
         // ---------- STATE ----------
-        let users = JSON.parse(localStorage.getItem('tempnexus_users')) || [];
-        let bannedIPs = JSON.parse(localStorage.getItem('tempnexus_banned')) || [];
-        let totalMailsCreated = parseInt(localStorage.getItem('tempnexus_totalMails')) || 0;
-        let visitorLog = JSON.parse(localStorage.getItem('tempnexus_visitors')) || [];
-
-        let currentIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
-        let currentUser = null;
-
-        function isIPBanned(ip) {
-            return bannedIPs.includes(ip);
-        }
-
-        // Check ban on load
-        if (isIPBanned(currentIP)) {
-            document.getElementById('banOverlay').classList.add('show');
-        }
+        let users = [];
+        let bannedIPs = [];
+        let totalMailsCreated = 0;
+        let visitorLog = [];
+        let previousStats = { users: 0, mails: 0, active: 0, banned: 0, visitors: 0 };
+        let refreshInterval = null;
+        let isLoggedIn = false;
 
         // DOM refs
-        const adminLink = document.getElementById('adminLink');
-        const adminPanelContainer = document.getElementById('adminPanelContainer');
-        const closeAdminBtn = document.getElementById('closeAdminBtn');
-        const adminLogin = document.getElementById('adminLogin');
-        const adminPanel = document.getElementById('adminPanel');
+        const loginSection = document.getElementById('loginSection');
+        const dashboard = document.getElementById('dashboard');
         const loginBtn = document.getElementById('loginBtn');
         const logoutBtn = document.getElementById('logoutBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
         const adminUser = document.getElementById('adminUser');
         const adminPass = document.getElementById('adminPass');
         const loginError = document.getElementById('loginError');
         const userTableBody = document.getElementById('userTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        // Stat elements
         const totalUsersEl = document.getElementById('totalUsers');
         const totalMailsEl = document.getElementById('totalMails');
         const activeNowEl = document.getElementById('activeNow');
         const bannedUsersEl = document.getElementById('bannedUsers');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-        const banOverlay = document.getElementById('banOverlay');
-
-        // Public UI refs
-        const emailDisplay = document.getElementById('currentEmailDisplay');
-        const mailContainer = document.getElementById('mailListContainer');
-        const inboxCountStat = document.getElementById('inboxCountStat');
-        const expiryStat = document.getElementById('expiryStat');
-        const activeUsersStat = document.getElementById('activeUsersStat');
-        const storageStat = document.getElementById('storageStat');
-        const composeTo = document.getElementById('composeTo');
-        const composeSubject = document.getElementById('composeSubject');
-        const composeBody = document.getElementById('composeBody');
-        const sendMailBtn = document.getElementById('sendMailBtn');
+        const totalVisitorsEl = document.getElementById('totalVisitors');
+        const dataSizeEl = document.getElementById('dataSize');
+        const userChange = document.getElementById('userChange');
+        const mailChange = document.getElementById('mailChange');
+        const activeChange = document.getElementById('activeChange');
+        const bannedChange = document.getElementById('bannedChange');
+        const visitorChange = document.getElementById('visitorChange');
+        const sizeChange = document.getElementById('sizeChange');
 
         // ---- Toast ----
         function showToast(msg, icon = 'fa-check-circle') {
@@ -821,65 +658,79 @@
             }, 3000);
         }
 
-        // ---- User/Visitor tracking ----
-        function captureVisitor(ip) {
-            if (!visitorLog.some(v => v.ip === ip)) {
-                visitorLog.push({ ip, firstSeen: new Date().toISOString(), lastSeen: new Date().toISOString() });
-            } else {
-                const visitor = visitorLog.find(v => v.ip === ip);
-                if (visitor) visitor.lastSeen = new Date().toISOString();
+        // ---- Load data from localStorage (cross-site) ----
+        function loadData() {
+            try {
+                // Since this is a separate admin panel, we need to access the same localStorage
+                // In production, this would be a backend API. For now, we use localStorage.
+                // Note: This only works if the admin panel is on the same domain or subdomain.
+                // For cross-domain, you'd need an API.
+                users = JSON.parse(localStorage.getItem('tempnexus_users')) || [];
+                bannedIPs = JSON.parse(localStorage.getItem('tempnexus_banned')) || [];
+                totalMailsCreated = parseInt(localStorage.getItem('tempnexus_totalMails')) || 0;
+                visitorLog = JSON.parse(localStorage.getItem('tempnexus_visitors')) || [];
+
+                // Update connection status
+                connectionStatus.innerHTML = '<i class="fas fa-circle" style="font-size:0.5rem;color:#3fc77a;"></i> Connected';
+                connectionStatus.style.borderColor = 'rgba(63,199,122,0.2)';
+
+                return true;
+            } catch (e) {
+                console.error('Error loading data:', e);
+                connectionStatus.innerHTML = '<i class="fas fa-circle" style="font-size:0.5rem;color:#faaab5;"></i> Disconnected';
+                connectionStatus.style.borderColor = 'rgba(220,60,80,0.2)';
+                return false;
             }
-            localStorage.setItem('tempnexus_visitors', JSON.stringify(visitorLog));
         }
 
-        function addUser(ip, username = null) {
-            let user = users.find(u => u.ip === ip);
-            if (!user) {
-                user = {
-                    ip: ip,
-                    username: username || 'user_' + ip.split('.').pop(),
-                    mails: 0,
-                    status: 'active',
-                    created: new Date().toISOString()
-                };
-                users.push(user);
-            }
-            user.lastActive = new Date().toISOString();
-            localStorage.setItem('tempnexus_users', JSON.stringify(users));
-            return user;
-        }
-
-        function incrementMails(ip) {
-            const user = users.find(u => u.ip === ip);
-            if (user) {
-                user.mails += 1;
-                totalMailsCreated += 1;
-                localStorage.setItem('tempnexus_totalMails', totalMailsCreated);
+        // ---- Save data ----
+        function saveData() {
+            try {
                 localStorage.setItem('tempnexus_users', JSON.stringify(users));
+                localStorage.setItem('tempnexus_banned', JSON.stringify(bannedIPs));
+                localStorage.setItem('tempnexus_totalMails', String(totalMailsCreated));
+                localStorage.setItem('tempnexus_visitors', JSON.stringify(visitorLog));
+            } catch (e) {
+                console.error('Error saving data:', e);
             }
         }
 
         // ---- Admin functions ----
-        function renderUserTable() {
+        function renderUserTable(filter = '') {
             if (!userTableBody) return;
-            if (users.length === 0) {
-                userTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#5d73a8;padding:2rem;">No users yet</td></tr>`;
+
+            const filteredUsers = users.filter(u => 
+                u.ip.includes(filter) || 
+                (u.username && u.username.toLowerCase().includes(filter.toLowerCase()))
+            );
+
+            if (filteredUsers.length === 0) {
+                userTableBody.innerHTML = `
+                    <tr><td colspan="6" style="text-align:center;color:#5d73a8;padding:2rem;">
+                        <i class="fas fa-users" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;opacity:0.4;"></i>
+                        No users found
+                    </td></tr>
+                `;
                 return;
             }
+
             let html = '';
-            users.forEach(user => {
+            filteredUsers.forEach(user => {
                 const isBanned = bannedIPs.includes(user.ip);
                 const status = isBanned ? 'banned' : 'active';
+                const lastActive = user.lastActive ? new Date(user.lastActive).toLocaleString() : 'Never';
+                
                 html += `
                     <tr>
-                        <td><code style="background:rgba(0,0,0,0.3);padding:0.2rem 0.6rem;border-radius:12px;">${user.ip}</code></td>
+                        <td><code style="background:rgba(0,0,0,0.3);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.85rem;">${user.ip}</code></td>
                         <td>${user.username || '—'}</td>
                         <td>${user.mails || 0}</td>
-                        <td><span class="status-badge" style="padding:0.2rem 0.8rem;border-radius:20px;font-size:0.75rem;font-weight:500;background:${isBanned ? 'rgba(220,60,80,0.2)' : 'rgba(43,158,94,0.25)'};color:${isBanned ? '#faaab5' : '#3fc77a'};border:1px solid ${isBanned ? 'rgba(220,60,80,0.2)' : 'rgba(63,199,122,0.2)'};">${status}</span></td>
+                        <td><span class="status-badge ${status}">${status}</span></td>
+                        <td style="font-size:0.8rem;color:#6a80b3;">${lastActive}</td>
                         <td>
                             ${isBanned 
-                                ? `<button class="btn-sm unban" data-ip="${user.ip}" style="padding:0.3rem 0.8rem;font-size:0.75rem;border-radius:30px;border:none;cursor:pointer;background:rgba(43,158,94,0.2);color:#3fc77a;border:1px solid rgba(63,199,122,0.2);transition:0.15s;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-check"></i> Unban</button>`
-                                : `<button class="btn-sm ban" data-ip="${user.ip}" style="padding:0.3rem 0.8rem;font-size:0.75rem;border-radius:30px;border:none;cursor:pointer;background:rgba(220,60,80,0.2);color:#faaab5;border:1px solid rgba(220,60,80,0.2);transition:0.15s;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-ban"></i> Ban</button>`
+                                ? `<button class="btn-sm unban" data-ip="${user.ip}"><i class="fas fa-check"></i> Unban</button>`
+                                : `<button class="btn-sm ban" data-ip="${user.ip}"><i class="fas fa-ban"></i> Ban</button>`
                             }
                         </td>
                     </tr>
@@ -887,6 +738,7 @@
             });
             userTableBody.innerHTML = html;
 
+            // Attach events
             document.querySelectorAll('.btn-sm.ban').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const ip = this.dataset.ip;
@@ -904,58 +756,108 @@
         function banUser(ip) {
             if (!bannedIPs.includes(ip)) {
                 bannedIPs.push(ip);
-                localStorage.setItem('tempnexus_banned', JSON.stringify(bannedIPs));
                 const user = users.find(u => u.ip === ip);
                 if (user) user.status = 'banned';
-                localStorage.setItem('tempnexus_users', JSON.stringify(users));
-                renderUserTable();
-                updateAdminStats();
+                saveData();
+                renderUserTable(searchInput.value);
+                updateStats();
                 showToast(`Banned IP: ${ip}`, 'fa-ban');
             }
         }
 
         function unbanUser(ip) {
             bannedIPs = bannedIPs.filter(b => b !== ip);
-            localStorage.setItem('tempnexus_banned', JSON.stringify(bannedIPs));
             const user = users.find(u => u.ip === ip);
             if (user) user.status = 'active';
-            localStorage.setItem('tempnexus_users', JSON.stringify(users));
-            renderUserTable();
-            updateAdminStats();
+            saveData();
+            renderUserTable(searchInput.value);
+            updateStats();
             showToast(`Unbanned IP: ${ip}`, 'fa-check');
         }
 
-        function updateAdminStats() {
+        function updateStats() {
             const activeUsers = users.filter(u => u.status === 'active').length;
             const bannedCount = bannedIPs.length;
-            totalUsersEl.textContent = users.length;
-            totalMailsEl.textContent = totalMailsCreated;
-            bannedUsersEl.textContent = bannedCount;
-            
             const now = new Date();
             const activeNow = users.filter(u => {
                 if (!u.lastActive) return false;
                 const last = new Date(u.lastActive);
                 return (now - last) < 300000 && u.status === 'active';
             }).length;
+
+            // Calculate changes
+            const userChangeVal = users.length - previousStats.users;
+            const mailChangeVal = totalMailsCreated - previousStats.mails;
+            const activeChangeVal = activeNow - previousStats.active;
+            const bannedChangeVal = bannedCount - previousStats.banned;
+            const visitorChangeVal = visitorLog.length - previousStats.visitors;
+
+            // Update values
+            totalUsersEl.textContent = users.length;
+            totalMailsEl.textContent = totalMailsCreated;
             activeNowEl.textContent = activeNow;
+            bannedUsersEl.textContent = bannedCount;
+            totalVisitorsEl.textContent = visitorLog.length;
+
+            // Calculate data size
+            const data = JSON.stringify({ users, bannedIPs, totalMailsCreated, visitorLog });
+            const sizeKB = (data.length / 1024).toFixed(1);
+            dataSizeEl.textContent = sizeKB + ' KB';
+
+            // Update changes
+            userChange.textContent = userChangeVal > 0 ? `+${userChangeVal} new` : userChangeVal < 0 ? `${userChangeVal} lost` : 'No change';
+            userChange.className = 'change ' + (userChangeVal > 0 ? 'positive' : userChangeVal < 0 ? 'negative' : '');
+            
+            mailChange.textContent = mailChangeVal > 0 ? `+${mailChangeVal} new` : mailChangeVal === 0 ? 'No change' : `${mailChangeVal} lost`;
+            mailChange.className = 'change ' + (mailChangeVal > 0 ? 'positive' : mailChangeVal < 0 ? 'negative' : '');
+            
+            activeChange.textContent = activeChangeVal > 0 ? `+${activeChangeVal} now` : activeChangeVal === 0 ? 'Steady' : `${activeChangeVal} less`;
+            activeChange.className = 'change ' + (activeChangeVal > 0 ? 'positive' : activeChangeVal < 0 ? 'negative' : '');
+            
+            bannedChange.textContent = bannedChangeVal > 0 ? `+${bannedChangeVal} banned` : bannedChangeVal === 0 ? 'No change' : `${bannedChangeVal} unbanned`;
+            bannedChange.className = 'change ' + (bannedChangeVal > 0 ? 'negative' : bannedChangeVal < 0 ? 'positive' : '');
+            
+            visitorChange.textContent = visitorChangeVal > 0 ? `+${visitorChangeVal} new` : visitorChangeVal === 0 ? 'No change' : `${visitorChangeVal} lost`;
+            visitorChange.className = 'change ' + (visitorChangeVal > 0 ? 'positive' : visitorChangeVal < 0 ? 'negative' : '');
+
+            // Store for next comparison
+            previousStats = {
+                users: users.length,
+                mails: totalMailsCreated,
+                active: activeNow,
+                banned: bannedCount,
+                visitors: visitorLog.length
+            };
         }
 
+        // ---- Admin Login ----
         function adminLogin() {
             const username = adminUser.value.trim();
             const password = adminPass.value.trim();
 
             if (username === 'admin' && password === 'admin123') {
                 loginError.style.display = 'none';
-                adminLogin.style.display = 'none';
-                adminPanel.style.display = 'block';
-                currentUser = 'admin';
-                addUser(currentIP, 'admin');
-                renderUserTable();
-                updateAdminStats();
-                showToast('Welcome Admin!', 'fa-shield-alt');
-                banOverlay.classList.remove('show');
-                sessionStorage.setItem('tempnexus_admin_session', 'true');
+                loginSection.style.display = 'none';
+                dashboard.style.display = 'block';
+                isLoggedIn = true;
+                
+                if (loadData()) {
+                    renderUserTable();
+                    updateStats();
+                    showToast('Welcome Admin!', 'fa-shield-alt');
+                    
+                    // Start auto-refresh
+                    if (refreshInterval) clearInterval(refreshInterval);
+                    refreshInterval = setInterval(() => {
+                        if (isLoggedIn) {
+                            loadData();
+                            renderUserTable(searchInput.value);
+                            updateStats();
+                        }
+                    }, 15000);
+                } else {
+                    showToast('Error loading data. Please check connection.', 'fa-exclamation-triangle');
+                }
             } else {
                 loginError.style.display = 'block';
                 setTimeout(() => { loginError.style.display = 'none'; }, 3000);
@@ -963,372 +865,71 @@
         }
 
         function adminLogout() {
-            adminLogin.style.display = 'flex';
-            adminPanel.style.display = 'none';
-            currentUser = null;
-            sessionStorage.removeItem('tempnexus_admin_session');
+            isLoggedIn = false;
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+            loginSection.style.display = 'flex';
+            dashboard.style.display = 'none';
             showToast('Logged out', 'fa-sign-out-alt');
-        }
-
-        // ---- Public functions ----
-        function generateTempEmail() {
-            const prefix = 'user' + Math.floor(Math.random() * 9000 + 1000);
-            const domains = ['tempnexus.com', 'instaddr.io', 'maildrop.cc', 'tempinbox.co'];
-            const domain = domains[Math.floor(Math.random() * domains.length)];
-            return `${prefix}@${domain}`;
-        }
-
-        let state = {
-            currentEmail: '',
-            inbox: [],
-            expiryDays: 15,
-            created: Date.now(),
-        };
-
-        function generateMockMail(fromOverride = null, subjectOverride = null, bodyOverride = null) {
-            const senders = [
-                'no-reply@instaddr.io', 'support@mailtracking.com', 'notify@socialboost.net',
-                'alerts@tempnexus.com', 'team@instaddr.io', 'admin@mailtracking.co',
-                'service@insta-notify.com', 'updates@temp-mail.org'
-            ];
-            const subjects = [
-                'Your login code', 'Weekly digest', 'New message from InstAddr',
-                'Mailtracking alert', 'Account verification', 'Password reset request',
-                'Welcome to TempNexus', 'Security update', 'You have new followers',
-                'Your inbox is ready', '2FA confirmation'
-            ];
-            const bodies = [
-                'Here is your verification code: 4821-09A1. Valid for 15 minutes.',
-                'You have 3 new notifications from your connected accounts.',
-                'Someone followed you on InstAddr. Check your profile.',
-                'MailTracking: Your email was opened 2 times on iOS.',
-                'Click the link to verify your temporary email address.',
-                'Your session is active. No action needed.',
-                'TempNexus is now integrated with 10+ services.',
-                'Your temporary inbox will expire in 15 days.',
-                'InstAddr: New comment on your photo.',
-                'Mailtracking report: 100% delivery rate.'
-            ];
-            const from = fromOverride || senders[Math.floor(Math.random() * senders.length)];
-            const subject = subjectOverride || subjects[Math.floor(Math.random() * subjects.length)];
-            const body = bodyOverride || bodies[Math.floor(Math.random() * bodies.length)];
-            const now = new Date();
-            const date = now.toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
-            return {
-                id: Date.now() + '_' + Math.random().toString(36).substring(2, 8),
-                from,
-                subject,
-                body,
-                date,
-                read: false,
-            };
-        }
-
-        let mailInterval = null;
-
-        function startMailSimulation() {
-            if (mailInterval) clearInterval(mailInterval);
-            mailInterval = setInterval(() => {
-                if (state.currentEmail) {
-                    const count = Math.random() > 0.7 ? 2 : 1;
-                    for (let i = 0; i < count; i++) {
-                        const newMail = generateMockMail();
-                        state.inbox.unshift(newMail);
-                    }
-                    if (state.inbox.length > 60) {
-                        state.inbox = state.inbox.slice(0, 50);
-                    }
-                    renderInbox();
-                    updatePublicStats();
-                }
-            }, 14000 + Math.floor(Math.random() * 10000));
-        }
-
-        function renderInbox() {
-            if (!state.inbox.length) {
-                mailContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-mail-bulk"></i>
-                        <p>No messages yet · waiting for incoming mail</p>
-                    </div>
-                `;
-                return;
-            }
-            let html = '';
-            state.inbox.forEach((mail) => {
-                const readIcon = mail.read ? 'fa-envelope-open' : 'fa-envelope';
-                const readColor = mail.read ? '#6679b3' : '#b8ccff';
-                html += `
-                    <div class="mail-item" data-mail-id="${mail.id}">
-                        <div class="mail-info">
-                            <div class="from"><i class="fas ${readIcon}" style="color:${readColor}"></i> ${mail.from}</div>
-                            <div class="subject">${mail.subject}</div>
-                            <div class="date"><i class="far fa-clock"></i> ${mail.date}</div>
-                        </div>
-                        <div class="mail-actions">
-                            <button class="btn-icon read-toggle" data-id="${mail.id}"><i class="fas fa-check-circle"></i> Read</button>
-                            <button class="btn-icon delete-mail" data-id="${mail.id}"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            mailContainer.innerHTML = html;
-
-            document.querySelectorAll('.read-toggle').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const id = this.dataset.id;
-                    const mail = state.inbox.find(m => m.id === id);
-                    if (mail) {
-                        mail.read = true;
-                        renderInbox();
-                    }
-                    e.stopPropagation();
-                });
-            });
-
-            document.querySelectorAll('.delete-mail').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const id = this.dataset.id;
-                    state.inbox = state.inbox.filter(m => m.id !== id);
-                    renderInbox();
-                    updatePublicStats();
-                    e.stopPropagation();
-                });
-            });
-        }
-
-        function updatePublicStats() {
-            inboxCountStat.textContent = state.inbox.length;
-            expiryStat.textContent = state.expiryDays + 'd';
-            activeUsersStat.textContent = users.length;
-            const approxBytes = state.inbox.reduce((acc, m) => acc + (m.body?.length || 0) + (m.subject?.length || 0), 0);
-            const kb = (approxBytes / 1024).toFixed(1);
-            storageStat.textContent = kb + ' KB';
-        }
-
-        function createNewInbox() {
-            state.inbox = [];
-            state.currentEmail = generateTempEmail();
-            state.created = Date.now();
-            emailDisplay.textContent = state.currentEmail;
-            renderInbox();
-            updatePublicStats();
-            if (mailInterval) {
-                clearInterval(mailInterval);
-                startMailSimulation();
-            }
-            setTimeout(() => {
-                if (state.currentEmail) {
-                    const welcome = {
-                        id: 'welcome_' + Date.now(),
-                        from: 'welcome@tempnexus.com',
-                        subject: 'Your temporary inbox is active',
-                        body: 'This inbox is valid for 15 days. All data will be auto-purged. Connect your InstAddr or Mailtracking account for enhanced features.',
-                        date: new Date().toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }),
-                        read: false,
-                    };
-                    state.inbox.unshift(welcome);
-                    renderInbox();
-                    updatePublicStats();
-                }
-            }, 800);
-            showToast('New inbox created!', 'fa-sync-alt');
-        }
-
-        function copyEmail() {
-            if (!state.currentEmail) return;
-            navigator.clipboard?.writeText(state.currentEmail).then(() => {
-                showToast('Email copied!', 'fa-copy');
-            }).catch(() => {
-                const input = document.createElement('input');
-                input.value = state.currentEmail;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
-                showToast('Email copied!', 'fa-copy');
-            });
-        }
-
-        function deleteInbox() {
-            if (confirm('Delete this inbox and all messages?')) {
-                createNewInbox();
-                showToast('Inbox deleted, new one created', 'fa-trash-alt');
-            }
-        }
-
-        function sendDirectMail() {
-            const to = composeTo.value.trim();
-            const subject = composeSubject.value.trim() || '(no subject)';
-            const body = composeBody.value.trim() || '(empty message)';
-
-            if (!to) {
-                showToast('Please enter a recipient email', 'fa-exclamation-triangle');
-                return;
-            }
-            if (!to.includes('@') || !to.includes('.')) {
-                showToast('Please enter a valid email address', 'fa-exclamation-triangle');
-                return;
-            }
-
-            const sentMail = {
-                id: 'sent_' + Date.now(),
-                from: state.currentEmail || 'you@tempnexus.com',
-                subject: '📤 Sent: ' + subject,
-                body: `To: ${to}\n\n${body}`,
-                date: new Date().toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }),
-                read: false,
-            };
-            state.inbox.unshift(sentMail);
-            renderInbox();
-            updatePublicStats();
-
-            setTimeout(() => {
-                const reply = generateMockMail(
-                    to,
-                    'Re: ' + subject,
-                    `This is an automated reply from ${to}.\n\nThank you for your message via TempNexus.\n\n- ${to} (simulated)`
-                );
-                state.inbox.unshift(reply);
-                renderInbox();
-                updatePublicStats();
-                showToast(`Reply received from ${to}`, 'fa-reply');
-            }, 2500);
-
-            composeTo.value = '';
-            composeSubject.value = '';
-            composeBody.value = '';
-
-            showToast(`Mail sent to ${to}`, 'fa-paper-plane');
-        }
-
-        // ---- Admin panel toggle ----
-        function openAdminPanel() {
-            adminPanelContainer.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            // Check if already logged in
-            if (sessionStorage.getItem('tempnexus_admin_session') === 'true') {
-                adminLogin.style.display = 'none';
-                adminPanel.style.display = 'block';
-                renderUserTable();
-                updateAdminStats();
-            } else {
-                adminLogin.style.display = 'flex';
-                adminPanel.style.display = 'none';
-            }
-        }
-
-        function closeAdminPanel() {
-            adminPanelContainer.style.display = 'none';
-            document.body.style.overflow = 'auto';
         }
 
         // ---- Init ----
         function init() {
-            // Capture visitor
-            captureVisitor(currentIP);
-            addUser(currentIP);
-
-            // Check if banned
-            if (isIPBanned(currentIP)) {
-                banOverlay.classList.add('show');
-            } else {
-                banOverlay.classList.remove('show');
+            // Check if already logged in via session
+            if (sessionStorage.getItem('tempnexus_admin_session') === 'true') {
+                adminLogin();
             }
 
-            // Init public UI
-            state.currentEmail = generateTempEmail();
-            emailDisplay.textContent = state.currentEmail;
-
-            setTimeout(() => {
-                const welcome = {
-                    id: 'welcome_' + Date.now(),
-                    from: 'hello@tempnexus.com',
-                    subject: 'Your inbox is ready',
-                    body: 'This is your temporary email. Share it anywhere. Use the "Send direct email" feature to compose messages to any address.',
-                    date: new Date().toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }),
-                    read: false,
-                };
-                state.inbox.unshift(welcome);
-                renderInbox();
-                updatePublicStats();
-            }, 300);
-
-            startMailSimulation();
-
-            // Public event listeners
-            document.getElementById('newInboxBtn').addEventListener('click', createNewInbox);
-            document.getElementById('copyEmailBtn').addEventListener('click', copyEmail);
-            document.getElementById('deleteInboxBtn').addEventListener('click', deleteInbox);
-            sendMailBtn.addEventListener('click', sendDirectMail);
-
-            composeTo.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendDirectMail(); });
-            composeSubject.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendDirectMail(); });
-            composeBody.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDirectMail(); } });
-
-            // Admin panel events
-            adminLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                openAdminPanel();
-            });
-
-            closeAdminBtn.addEventListener('click', closeAdminPanel);
-
-            // Close admin panel on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && adminPanelContainer.style.display === 'flex') {
-                    closeAdminPanel();
-                }
-            });
-
-            // Click outside to close (on backdrop)
-            adminPanelContainer.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeAdminPanel();
-                }
-            });
-
+            // Event listeners
             loginBtn.addEventListener('click', adminLogin);
             logoutBtn.addEventListener('click', adminLogout);
+            refreshBtn.addEventListener('click', function() {
+                if (isLoggedIn) {
+                    loadData();
+                    renderUserTable(searchInput.value);
+                    updateStats();
+                    showToast('Refreshed', 'fa-sync-alt');
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                if (isLoggedIn) {
+                    renderUserTable(this.value);
+                }
+            });
 
             adminUser.addEventListener('keydown', (e) => { if (e.key === 'Enter') adminLogin(); });
             adminPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') adminLogin(); });
 
-            // Periodic updates
-            setInterval(() => {
-                updatePublicStats();
-                if (adminPanel.style.display === 'block') {
-                    updateAdminStats();
-                }
-            }, 10000);
+            // Load initial data if logged in
+            if (sessionStorage.getItem('tempnexus_admin_session') === 'true') {
+                loadData();
+                renderUserTable();
+                updateStats();
+            }
 
-            // Simulate new visitors and mail creation
-            setInterval(() => {
-                if (Math.random() > 0.7) {
-                    const newIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
-                    if (!isIPBanned(newIP)) {
-                        addUser(newIP);
-                        if (adminPanel.style.display === 'block') {
-                            renderUserTable();
-                            updateAdminStats();
-                        }
-                    }
-                }
-                if (Math.random() > 0.8) {
-                    const randomUser = users[Math.floor(Math.random() * users.length)];
-                    if (randomUser && randomUser.status !== 'banned') {
-                        incrementMails(randomUser.ip);
-                        if (adminPanel.style.display === 'block') {
-                            renderUserTable();
-                            updateAdminStats();
-                        }
-                    }
-                }
-            }, 12000);
+            console.log('TempNexus Admin Panel initialized');
+            console.log('Site: https://kco-maile.vercel.app/');
         }
+
+        // Override login to save session
+        const originalLogin = adminLogin;
+        adminLogin = function() {
+            originalLogin.call(this);
+            sessionStorage.setItem('tempnexus_admin_session', 'true');
+        };
+
+        const originalLogout = adminLogout;
+        adminLogout = function() {
+            originalLogout.call(this);
+            sessionStorage.removeItem('tempnexus_admin_session');
+        };
 
         init();
     })();
 </script>
+
 </body>
 </html>
