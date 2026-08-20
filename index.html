@@ -253,12 +253,6 @@
             border-color: #5b7ed0;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
         .stats {
             display: flex;
             flex-wrap: wrap;
@@ -1333,15 +1327,14 @@
         };
 
         // ============================================================
-        // MAIL GENERATION
+        // MAIL GENERATION - ONLY FOR THE CURRENT USER'S INBOX
         // ============================================================
         function generateMockMail(fromOverride = null, subjectOverride = null, bodyOverride = null) {
             const senders = [
                 'no-reply@instaddr.io', 'support@mailtracking.com', 'notify@socialboost.net',
                 'alerts@tempnexus.com', 'team@instaddr.io', 'admin@mailtracking.co',
                 'service@insta-notify.com', 'updates@temp-mail.org', 'hello@tempail.com',
-                'security@guerrillamail.com', 'noreply@10minutemail.com', 'welcome@temp-mail.org',
-                'notifications@mailinator.com', 'info@yopmail.com'
+                'security@guerrillamail.com', 'noreply@10minutemail.com', 'welcome@temp-mail.org'
             ];
             const subjects = [
                 'Your login code', 'Weekly digest', 'New message from InstAddr',
@@ -1349,8 +1342,7 @@
                 'Welcome to TempNexus', 'Security update', 'You have new followers',
                 'Your inbox is ready', '2FA confirmation', 'New comment on your post',
                 'Your temporary email is active', 'Message from TempMail.org',
-                'Important notification', 'Your account has been created',
-                'Verify your email address', 'You have a new message'
+                'Important notification', 'Your account has been created'
             ];
             const bodies = [
                 'Here is your verification code: 4821-09A1. Valid for 15 minutes.',
@@ -1480,7 +1472,7 @@
         }
 
         // ============================================================
-        // MAIL MODAL
+        // MAIL MODAL - SHOWS FULL EMAIL CONTENT
         // ============================================================
         function openMailModal(mailId) {
             const mail = state.inbox.find(m => m.id === mailId);
@@ -1490,10 +1482,13 @@
             }
             mail.read = true;
             renderInbox();
+            
+            // Display full email content
             modalFrom.textContent = mail.from;
             modalSubject.textContent = mail.subject;
             modalDate.textContent = mail.date;
-            modalBody.textContent = mail.body;
+            modalBody.textContent = mail.body || 'No content available.';
+            
             mailModal.classList.add('show');
             document.body.style.overflow = 'hidden';
         }
@@ -1787,13 +1782,14 @@
         }
 
         // ============================================================
-        // MAIL SIMULATION
+        // MAIL SIMULATION - ONLY FOR CURRENT USER
         // ============================================================
         let mailInterval = null;
 
         function startMailSimulation() {
             if (mailInterval) clearInterval(mailInterval);
             mailInterval = setInterval(() => {
+                // Only generate emails if we have a valid email and user is not banned
                 if (state.currentEmail && !isIPBanned(currentIP)) {
                     if (!checkRateLimit(currentIP)) {
                         return;
@@ -1942,7 +1938,6 @@
             console.log('✅ TempNexus initialized successfully');
             console.log('📧 Email:', state.currentEmail);
             console.log('🔒 Rate Limit:', CONFIG.RATE_LIMIT, 'emails/min');
-            console.log('📏 Size Limit:', CONFIG.EMAIL_SIZE_LIMIT / 1024, 'KB');
         }
 
         init();
