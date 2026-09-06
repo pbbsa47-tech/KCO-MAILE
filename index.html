@@ -1,1947 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TempNexus · Secure Temporary Email</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        :root {
-            --bg-primary: #0b0e1a;
-            --bg-secondary: #141a2b;
-            --bg-card: rgba(22, 28, 46, 0.85);
-            --text-primary: #d6e2ff;
-            --text-secondary: #b2c9f5;
-            --text-muted: #6a80b3;
-            --accent: #5f84ff;
-            --accent-hover: #7a9cff;
-            --success: #3fc77a;
-            --danger: #faaab5;
-            --border-color: rgba(255,255,255,0.06);
-            --shadow: 0 25px 50px -8px rgba(0,0,0,0.8);
-        }
-
-        body {
-            background: linear-gradient(145deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            margin: 0;
-        }
-
-        .nexus-card {
-            max-width: 1100px;
-            width: 100%;
-            background: var(--bg-card);
-            backdrop-filter: blur(12px) saturate(180%);
-            -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border-radius: 48px;
-            padding: 2.5rem 2.5rem;
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.06);
-            border: 1px solid var(--border-color);
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .logo-section .brand-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #1a264b, #2b3d6e);
-            padding: 6px;
-            margin: 0 auto 12px;
-            box-shadow: 0 12px 30px rgba(40, 80, 200, 0.3);
-            border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-section .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 14px;
-        }
-
-        .logo-section h1 {
-            font-size: 3.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #d6e2ff, #7a9cff, #5f84ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.3rem;
-        }
-
-        .logo-section .tagline {
-            color: var(--text-muted);
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-
-        .logo-section .tagline i {
-            color: var(--accent);
-            margin: 0 4px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 1.8rem;
-            gap: 0.8rem;
-        }
-
-        .brand .badge {
-            background: rgba(70, 130, 255, 0.15);
-            padding: 0.4rem 1rem;
-            border-radius: 60px;
-            border: 1px solid rgba(70, 130, 255, 0.2);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .brand .badge i {
-            color: var(--accent);
-        }
-
-        .admin-toggle {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            background: transparent;
-        }
-
-        .admin-toggle:hover {
-            background: rgba(70, 130, 255, 0.1);
-            border-color: var(--accent);
-            color: var(--text-primary);
-        }
-
-        .generator {
-            background: rgba(12, 17, 29, 0.6);
-            border-radius: 60px;
-            padding: 0.6rem 0.6rem 0.6rem 1.8rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .generator .email-preview {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            flex: 1 1 200px;
-        }
-
-        .generator .email-preview i {
-            color: var(--accent);
-            font-size: 1.2rem;
-        }
-
-        .generator .email-preview span {
-            background: #1a2340;
-            padding: 0.2rem 1rem;
-            border-radius: 40px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.95rem;
-            color: #b8cbff;
-            border: 1px solid #2a3a66;
-        }
-
-        .gen-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn {
-            background: transparent;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 40px;
-            font-weight: 550;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-            cursor: pointer;
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            background: rgba(30, 40, 70, 0.4);
-            backdrop-filter: blur(4px);
-        }
-
-        .btn-primary {
-            background: linear-gradient(145deg, #3f6eff, #2b4ed3);
-            border: 1px solid #5f84ff;
-            color: white;
-            box-shadow: 0 8px 18px -6px #1f3a9e;
-        }
-
-        .btn-primary:hover {
-            transform: scale(1.02);
-            background: linear-gradient(145deg, #5a7eff, #3b5ee0);
-        }
-
-        .btn-success {
-            background: linear-gradient(145deg, #2b9e5e, #1e7a47);
-            border: 1px solid #3fc77a;
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: scale(1.02);
-            background: linear-gradient(145deg, #36b86d, #258f51);
-        }
-
-        .btn-danger {
-            background: rgba(220,60,80,0.15);
-            border: 1px solid #b44b5a;
-            color: var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: #832f3f;
-            color: white;
-        }
-
-        .btn-outline {
-            border: 1px solid #314675;
-            background: rgba(20,30,60,0.3);
-        }
-
-        .btn-outline:hover {
-            background: #2d3f6e;
-            border-color: #5b7ed0;
-        }
-
-        .stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 0.8rem;
-            margin-bottom: 2rem;
-            background: rgba(0,0,0,0.15);
-            padding: 0.6rem 1.2rem;
-            border-radius: 100px;
-            backdrop-filter: blur(4px);
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .stat-item i {
-            color: var(--accent);
-            width: 1.2rem;
-        }
-
-        .stat-item strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .compose-section {
-            background: rgba(12,17,29,0.4);
-            border-radius: 30px;
-            padding: 1rem 1.4rem;
-            margin-bottom: 1.8rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .compose-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 0.6rem;
-            font-size: 0.9rem;
-        }
-
-        .compose-header i {
-            color: var(--accent);
-        }
-
-        .compose-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .compose-form input,
-        .compose-form textarea {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #2a3a66;
-            border-radius: 40px;
-            padding: 0.5rem 1rem;
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            outline: none;
-            transition: 0.15s;
-            flex: 1 1 150px;
-            min-width: 100px;
-        }
-
-        .compose-form input:focus,
-        .compose-form textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(70,130,255,0.15);
-        }
-
-        .compose-form textarea {
-            flex: 2 1 220px;
-            border-radius: 24px;
-            resize: vertical;
-            min-height: 40px;
-            font-family: inherit;
-        }
-
-        .compose-form .btn {
-            flex-shrink: 0;
-        }
-
-        .timer-section {
-            background: rgba(12,17,29,0.3);
-            border-radius: 30px;
-            padding: 0.6rem 1.2rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .timer-section .timer-label {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .timer-section .timer-label i {
-            color: var(--accent);
-        }
-
-        .timer-section .countdown {
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 600;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-        }
-
-        .timer-section .countdown.warning {
-            color: #f0a030;
-        }
-
-        .timer-section .countdown.danger {
-            color: var(--danger);
-        }
-
-        .mail-section {
-            margin-top: 0.2rem;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 450;
-            font-size: 0.95rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.6rem;
-        }
-
-        .section-title i {
-            color: var(--accent);
-            margin-right: 8px;
-        }
-
-        .mail-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 380px;
-            overflow-y: auto;
-            padding-right: 4px;
-            scrollbar-width: thin;
-            scrollbar-color: #3f5a9e #141c30;
-        }
-
-        .mail-list::-webkit-scrollbar {
-            width: 5px;
-        }
-        .mail-list::-webkit-scrollbar-track {
-            background: #141c30;
-            border-radius: 12px;
-        }
-        .mail-list::-webkit-scrollbar-thumb {
-            background: #3f5a9e;
-            border-radius: 12px;
-        }
-
-        .mail-item {
-            background: rgba(16,23,42,0.7);
-            backdrop-filter: blur(4px);
-            border-radius: 20px;
-            padding: 0.8rem 1.2rem;
-            border-left: 4px solid var(--accent);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            transition: 0.15s;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-        }
-
-        .mail-item:hover {
-            background: #1a264b;
-            border-left-color: var(--accent-hover);
-            transform: translateX(4px);
-        }
-
-        .mail-item.read {
-            border-left-color: #3a4a6e;
-            opacity: 0.7;
-        }
-
-        .mail-item.read .mail-info .from {
-            color: #8899bb;
-        }
-        .mail-item.read .mail-info .subject {
-            color: #7a8aaa;
-        }
-
-        .mail-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex: 2 1 180px;
-            cursor: pointer;
-        }
-
-        .mail-info .from {
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.9rem;
-        }
-
-        .mail-info .from i {
-            color: var(--accent);
-            font-size: 0.7rem;
-        }
-
-        .mail-info .subject {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .mail-info .date {
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .mail-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .mail-actions .btn-icon {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: 30px;
-            transition: 0.1s;
-            font-size: 0.7rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            border: 1px solid transparent;
-        }
-
-        .mail-actions .btn-icon:hover {
-            background: #2b3d6e;
-            color: var(--text-primary);
-            border-color: #4560b0;
-        }
-
-        .mail-actions .btn-icon.delete-mail:hover {
-            background: rgba(220,60,80,0.2);
-            color: var(--danger);
-            border-color: #b44b5a;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2.5rem 1rem;
-            color: var(--text-muted);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 0.8rem;
-            opacity: 0.4;
-        }
-
-        .footnote {
-            margin-top: 1.8rem;
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.2rem;
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .footnote i {
-            color: var(--accent);
-            margin-right: 4px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #1a264b;
-            border: 1px solid var(--accent);
-            padding: 0.7rem 1.4rem;
-            border-radius: 60px;
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: 0.25s ease;
-            pointer-events: none;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .toast i {
-            color: var(--accent);
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 10000;
-            backdrop-filter: blur(12px);
-            padding: 2rem;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal-content {
-            max-width: 650px;
-            width: 100%;
-            background: rgba(22,28,46,0.95);
-            border-radius: 48px;
-            padding: 2.5rem;
-            border: 1px solid var(--border-color);
-            position: relative;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            background: rgba(220,60,80,0.15);
-            border: 1px solid #b44b5a;
-            color: var(--danger);
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: 0.15s;
-        }
-
-        .modal-close:hover {
-            background: #832f3f;
-            color: white;
-        }
-
-        .modal-content .mail-from {
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-
-        .modal-content .mail-subject {
-            color: var(--text-secondary);
-            font-size: 1.3rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-        }
-
-        .modal-content .mail-date {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .modal-content .mail-body {
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            line-height: 1.7;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background: rgba(0,0,0,0.2);
-            padding: 1.2rem;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .admin-modal-content {
-            max-width: 1100px;
-        }
-
-        .admin-login-form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 2rem 0;
-        }
-
-        .admin-login-form h2 {
-            color: var(--text-primary);
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .admin-login-form h2 i {
-            color: var(--accent);
-        }
-
-        .admin-login-form .login-fields {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            max-width: 380px;
-        }
-
-        .admin-login-form .login-fields input {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid #2a3a66;
-            border-radius: 40px;
-            padding: 0.8rem 1.4rem;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            outline: none;
-            transition: 0.15s;
-        }
-
-        .admin-login-form .login-fields input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(70,130,255,0.15);
-        }
-
-        .admin-login-form .login-error {
-            color: var(--danger);
-            background: rgba(220,60,80,0.15);
-            padding: 0.6rem 1.2rem;
-            border-radius: 40px;
-            border: 1px solid #b44b5a;
-            font-size: 0.9rem;
-            display: none;
-        }
-
-        .admin-dashboard {
-            display: none;
-        }
-
-        .admin-dashboard .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .admin-dashboard .stat-card {
-            background: rgba(12,17,29,0.6);
-            border-radius: 20px;
-            padding: 1rem 1.2rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .admin-dashboard .stat-card .label {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .admin-dashboard .stat-card .value {
-            color: var(--text-primary);
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .admin-dashboard .table-container {
-            background: rgba(12,17,29,0.4);
-            border-radius: 20px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-        }
-
-        .admin-dashboard table {
-            width: 100%;
-            border-collapse: collapse;
-            color: var(--text-primary);
-            font-size: 0.85rem;
-        }
-
-        .admin-dashboard th {
-            text-align: left;
-            padding: 0.6rem 0.5rem;
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .admin-dashboard td {
-            padding: 0.6rem 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .admin-dashboard .status-badge {
-            padding: 0.15rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
-        .admin-dashboard .status-badge.active {
-            background: rgba(43,158,94,0.25);
-            color: var(--success);
-            border: 1px solid rgba(63,199,122,0.2);
-        }
-
-        .admin-dashboard .status-badge.banned {
-            background: rgba(220,60,80,0.2);
-            color: var(--danger);
-            border: 1px solid rgba(220,60,80,0.2);
-        }
-
-        .admin-dashboard .btn-sm {
-            padding: 0.2rem 0.7rem;
-            font-size: 0.7rem;
-            border-radius: 30px;
-            border: none;
-            cursor: pointer;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .admin-dashboard .btn-sm.ban {
-            background: rgba(220,60,80,0.2);
-            color: var(--danger);
-            border: 1px solid rgba(220,60,80,0.2);
-        }
-
-        .admin-dashboard .btn-sm.ban:hover {
-            background: #832f3f;
-            color: white;
-        }
-
-        .admin-dashboard .btn-sm.unban {
-            background: rgba(43,158,94,0.2);
-            color: var(--success);
-            border: 1px solid rgba(63,199,122,0.2);
-        }
-
-        .admin-dashboard .btn-sm.unban:hover {
-            background: #1e7a47;
-            color: white;
-        }
-
-        .admin-dashboard .admin-header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .admin-dashboard .admin-header-bar h2 {
-            color: var(--text-primary);
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .admin-dashboard .admin-header-bar h2 i {
-            color: var(--accent);
-        }
-
-        .lang-selector {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .lang-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: 0.15s;
-        }
-
-        .lang-btn:hover,
-        .lang-btn.active {
-            background: rgba(70,130,255,0.15);
-            border-color: var(--accent);
-            color: var(--text-primary);
-        }
-
-        .ban-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(12px);
-        }
-
-        .ban-overlay.show {
-            display: flex;
-        }
-
-        .ban-box {
-            background: rgba(22,28,46,0.95);
-            border-radius: 48px;
-            padding: 3rem 2.5rem;
-            max-width: 480px;
-            text-align: center;
-            border: 2px solid #b44b5a;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-        }
-
-        .ban-box i {
-            font-size: 4rem;
-            color: var(--danger);
-            margin-bottom: 1rem;
-        }
-
-        .ban-box h2 {
-            color: var(--danger);
-            font-size: 2rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .ban-box p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        @media (max-width: 680px) {
-            .nexus-card { padding: 1.5rem; }
-            .logo-section h1 { font-size: 2.2rem; }
-            .logo-section .brand-logo { width: 60px; height: 60px; }
-            .generator { padding: 0.6rem; border-radius: 30px; flex-direction: column; gap: 8px; }
-            .generator .email-preview { width: 100%; justify-content: center; }
-            .gen-actions { width: 100%; justify-content: center; }
-            .stats { flex-direction: column; align-items: flex-start; border-radius: 30px; }
-            .compose-form input, .compose-form textarea { flex: 1 1 100%; }
-            .timer-section { flex-direction: column; align-items: stretch; text-align: center; }
-            .admin-modal-content { padding: 1.2rem; }
-            .admin-dashboard .stats-grid { grid-template-columns: 1fr; }
-            .modal-content { padding: 1.5rem; margin: 1rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KCO Mail Generator | InstaAddr Temporary Mail Service</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      --card-bg: rgba(30, 41, 59, 0.75);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --border: rgba(0, 0, 0, 0.08);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg-gradient); color: var(--text); min-height: 100vh; padding: 16px; transition: background 0.3s; }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px; background: var(--card-bg); border: 1px solid var(--border);
+      backdrop-filter: blur(16px); border-radius: 16px; margin-bottom: 20px;
+    }
+    
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    
+    .glass {
+      background: var(--card-bg); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 16px;
+      box-shadow: var(--glass-shadow); padding: 20px; margin-bottom: 20px;
+    }
+
+    .toolbar { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+    @media (max-width: 768px) { .toolbar { grid-template-columns: 1fr; } }
+
+    .input-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    input, select {
+      padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.15); color: var(--text); font-size: 0.95rem; outline: none;
+    }
+    input[type="text"] { flex: 1; min-width: 180px; }
+
+    button {
+      padding: 12px 20px; border-radius: 10px; border: none; background: var(--primary);
+      color: white; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex;
+      align-items: center; justify-content: center; gap: 6px;
+    }
+    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    button.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    button.danger { background: var(--danger); }
+
+    .status-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; gap: 10px; }
+    
+    .main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+    @media (max-width: 850px) { .main-layout { grid-template-columns: 1fr; } }
+
+    .inbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .email-list { list-style: none; max-height: 520px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    
+    .email-card {
+      padding: 14px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; position: relative;
+    }
+    .email-card:hover { background: rgba(255,255,255,0.05); }
+    .email-card.unread { border-left: 4px solid var(--accent); font-weight: 600; }
+    .email-card .sender { font-size: 0.9rem; margin-bottom: 4px; }
+    .email-card .subject { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .email-viewer { min-height: 400px; display: flex; flex-direction: column; }
+    .email-viewer-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
+    .email-body { flex: 1; line-height: 1.6; word-break: break-word; }
+    
+    .badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+    .badge.ip { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+
+    .attachments { margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border); }
+    .attachment-item { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 0.85rem; margin-right: 8px; }
+
+    .toast {
+      position: fixed; bottom: 20px; right: 20px; background: var(--primary);
+      color: white; padding: 12px 20px; border-radius: 10px; font-weight: 500;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3); opacity: 0; transform: translateY(10px);
+      transition: all 0.3s; z-index: 1000; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
 </head>
 <body>
 
-<div class="ban-overlay" id="banOverlay">
-    <div class="ban-box">
-        <i class="fas fa-ban"></i>
-        <h2>⛔ Access Denied</h2>
-        <p>Your IP address has been banned from TempNexus for violating our terms of service.</p>
-        <p style="margin-top: 12px; color: #6a80b3; font-size: 0.85rem;">If you believe this is a mistake, please contact support.</p>
+<div class="container">
+  <header>
+    <div class="logo">⚡ KCO Mail Generator <span style="font-size: 0.7rem; color: var(--accent);">20+ DOMAINS</span></div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <span class="badge ip" id="user-fp">IP Sync Active</span>
+      <button class="secondary" onclick="toggleTheme()">🌓</button>
     </div>
+  </header>
+
+  <div class="glass">
+    <div class="toolbar">
+      <div class="input-group">
+        <input type="text" id="custom-prefix" placeholder="Custom prefix..." style="max-width: 160px;">
+        <select id="domain-select"><option value="">Loading 20+ domains...</option></select>
+        <button onclick="createNewAddress()">Create Mail</button>
+      </div>
+      <div class="input-group">
+        <input type="text" id="active-email" readonly placeholder="Your temp email address...">
+        <button onclick="copyEmail()">Copy</button>
+        <button class="secondary" onclick="manualRefresh()">🔄 Sync</button>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div>
+        <span>Active Mailbox: </span>
+        <strong id="display-address-lbl">None</strong>
+      </div>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--accent);">⏳ 30-Day Auto Retention Active</span>
+        <button class="danger" style="padding: 4px 10px; font-size: 0.8rem;" onclick="clearCurrentInbox()">Delete Local Mail</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="glass">
+      <div class="inbox-header">
+        <h3>Inbox (<span id="unread-count">0</span>)</h3>
+        <span class="badge" id="sync-status">Connected</span>
+      </div>
+      <input type="text" id="search-input" placeholder="Search inbox..." oninput="applyFilter()" style="width: 100%; margin-bottom: 12px;">
+      <ul class="email-list" id="email-list">
+        <li class="email-card">Waiting for messages...</li>
+      </ul>
+    </div>
+
+    <div class="glass email-viewer" id="email-viewer">
+      <div style="text-align: center; color: var(--text-muted); margin: auto;">
+        📩 Select an email from the inbox list to read full content.
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="nexus-card" id="app">
-    <!-- Logo Section -->
-    <div class="logo-section">
-        <div class="brand-logo">
-            <img src="https://www.image2url.com/r2/default/images/1787220047845-28f1c7c8-6565-4952-a936-2640fa9b7408.png" alt="TempNexus" />
-        </div>
-        <h1>TempNexus</h1>
-        <div class="tagline">
-            <i class="fas fa-shield-alt"></i> Secure · Private · Temporary Email
-            <span style="margin:0 8px;color:var(--border-color);">|</span>
-            <i class="fas fa-globe"></i> 16+ Languages
-        </div>
-    </div>
-
-    <!-- Header -->
-    <div class="brand">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <div class="badge"><i class="fas fa-shield-alt"></i> 15d auto-purge</div>
-            <div class="badge"><i class="fas fa-lock"></i> Rate Limited</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <div class="lang-selector">
-                <button class="lang-btn active" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="es">ES</button>
-                <button class="lang-btn" data-lang="fr">FR</button>
-                <button class="lang-btn" data-lang="de">DE</button>
-                <button class="lang-btn" data-lang="zh">中文</button>
-                <button class="lang-btn" data-lang="ja">日本語</button>
-            </div>
-            <button class="admin-toggle" id="adminToggle"><i class="fas fa-crown"></i> Admin</button>
-        </div>
-    </div>
-
-    <!-- Generator -->
-    <div class="generator">
-        <div class="email-preview">
-            <i class="fas fa-at"></i>
-            <span id="currentEmailDisplay">loading...</span>
-        </div>
-        <div class="gen-actions">
-            <button class="btn btn-primary" id="newInboxBtn"><i class="fas fa-sync-alt"></i> New</button>
-            <button class="btn btn-outline" id="copyEmailBtn"><i class="fas fa-copy"></i> Copy</button>
-            <button class="btn btn-danger" id="deleteInboxBtn"><i class="fas fa-trash-alt"></i> Delete</button>
-        </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats">
-        <span class="stat-item"><i class="fas fa-inbox"></i> Inbox: <strong id="inboxCountStat">0</strong></span>
-        <span class="stat-item"><i class="fas fa-clock"></i> Expires: <strong id="expiryStat">15d</strong></span>
-        <span class="stat-item"><i class="fas fa-users"></i> Active: <strong id="activeUsersStat">1</strong></span>
-        <span class="stat-item"><i class="fas fa-database"></i> Storage: <strong id="storageStat">0 KB</strong></span>
-        <span class="stat-item"><i class="fas fa-shield-alt"></i> Rate: <strong id="rateLimitStat">60/min</strong></span>
-    </div>
-
-    <!-- Timer -->
-    <div class="timer-section">
-        <span class="timer-label"><i class="fas fa-hourglass-half"></i> <span id="timerLabel">Email expires in:</span></span>
-        <span class="countdown" id="countdownTimer">14d 23h 59m</span>
-    </div>
-
-    <!-- Compose -->
-    <div class="compose-section">
-        <div class="compose-header">
-            <i class="fas fa-paper-plane"></i> <span id="composeLabel">Send direct email</span>
-            <span style="font-size:0.7rem; opacity:0.5; margin-left:auto;"><i class="fas fa-lock"></i> secure</span>
-        </div>
-        <div class="compose-form">
-            <input type="text" id="composeTo" placeholder="recipient@example.com">
-            <input type="text" id="composeSubject" placeholder="Subject">
-            <textarea id="composeBody" placeholder="Message body..." rows="1"></textarea>
-            <button class="btn btn-success" id="sendMailBtn"><i class="fas fa-paper-plane"></i> Send</button>
-        </div>
-    </div>
-
-    <!-- Mail List -->
-    <div class="mail-section">
-        <div class="section-title">
-            <span><i class="fas fa-list-ul"></i> <span id="inboxLabel">Incoming messages</span></span>
-            <span style="font-size:0.75rem; opacity:0.5;"><i class="fas fa-rotate-right"></i> real-time</span>
-        </div>
-        <div class="mail-list" id="mailListContainer">
-            <div class="empty-state">
-                <i class="fas fa-mail-bulk"></i>
-                <p id="emptyMessage">No messages yet · waiting for incoming mail</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footnote">
-        <span><i class="fas fa-cloud-upload-alt"></i> 100% serverless · Vercel ready</span>
-        <span><i class="fas fa-envelope"></i> InstAddr · MailTracking · TempMail</span>
-        <span><i class="fas fa-trash-restore"></i> auto-delete after 15 days</span>
-        <span><i class="fas fa-shield-alt"></i> XSS protected · Rate limited</span>
-    </div>
-</div>
-
-<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMessage">Done</span></div>
-
-<!-- Mail Detail Modal -->
-<div class="modal-overlay" id="mailModal">
-    <div class="modal-content">
-        <button class="modal-close" id="mailModalClose"><i class="fas fa-times"></i> Close</button>
-        <div id="mailDetailContent">
-            <div class="mail-from" id="modalFrom">sender@example.com</div>
-            <div class="mail-subject" id="modalSubject">Email Subject</div>
-            <div class="mail-date" id="modalDate">Jan 1, 2024</div>
-            <div class="mail-body" id="modalBody">Email body content here...</div>
-        </div>
-    </div>
-</div>
-
-<!-- Admin Modal -->
-<div class="modal-overlay" id="adminModal">
-    <div class="modal-content admin-modal-content">
-        <button class="modal-close" id="adminClose"><i class="fas fa-times"></i> Close</button>
-
-        <div id="adminLoginSection" class="admin-login-form">
-            <h2><i class="fas fa-shield-alt"></i> Admin Access</h2>
-            <div class="login-fields">
-                <input type="text" id="adminUser" placeholder="Username" value="admin">
-                <input type="password" id="adminPass" placeholder="Password" value="admin123">
-                <input type="password" id="adminNewPass" placeholder="Set New Password (optional)" style="border-color: #3a5a8a;">
-                <div id="adminLoginError" class="login-error"><i class="fas fa-exclamation-triangle"></i> Invalid credentials</div>
-                <button class="btn btn-primary" id="adminLoginBtn"><i class="fas fa-lock-open"></i> Enter Admin Panel</button>
-                <button class="btn btn-outline" id="adminSetPassBtn" style="width:100%;justify-content:center;font-size:0.8rem;">
-                    <i class="fas fa-key"></i> Set Custom Password
-                </button>
-            </div>
-        </div>
-
-        <div id="adminDashboard" class="admin-dashboard">
-            <div class="admin-header-bar">
-                <h2><i class="fas fa-crown"></i> Admin Dashboard</h2>
-                <button class="btn btn-danger" id="adminLogoutBtn" style="padding:0.4rem 1rem;border-radius:30px;font-size:0.8rem;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card"><div class="label"><i class="fas fa-users"></i> Total Users</div><div class="value" id="adminTotalUsers">0</div></div>
-                <div class="stat-card"><div class="label"><i class="fas fa-envelope"></i> Total Mails</div><div class="value" id="adminTotalMails">0</div></div>
-                <div class="stat-card"><div class="label"><i class="fas fa-eye"></i> Active Now</div><div class="value" id="adminActiveNow">0</div></div>
-                <div class="stat-card"><div class="label"><i class="fas fa-ban"></i> Banned</div><div class="value" id="adminBannedUsers">0</div></div>
-                <div class="stat-card"><div class="label"><i class="fas fa-shield-alt"></i> Rate Limit</div><div class="value" id="adminRateLimit">60/min</div></div>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead><tr><th>IP</th><th>Username</th><th>Mails</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody id="adminUserTableBody"><tr><td colspan="5" style="text-align:center;color:#5d73a8;padding:1.5rem;">Loading...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="toast" class="toast">Notification</div>
 
 <script>
-    (function() {
-        "use strict";
+  let activeEmail = localStorage.getItem('kco_email') || '';
+  let cachedMessages = JSON.parse(localStorage.getItem('kco_messages') || '[]');
+  let syncTimer = null;
 
-        // ============================================================
-        // CONFIGURATION
-        // ============================================================
-        const CONFIG = {
-            ADMIN_PASSWORD: localStorage.getItem('tempnexus_admin_password') || 'admin123',
-            RATE_LIMIT: 60,
-            EMAIL_SIZE_LIMIT: 1024 * 1024,
-            EXPIRY_DAYS: 15,
-            MAX_INBOX_SIZE: 50,
-        };
+  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
-        // ============================================================
-        // STATE
-        // ============================================================
-        let users = JSON.parse(localStorage.getItem('tempnexus_users')) || [];
-        let bannedIPs = JSON.parse(localStorage.getItem('tempnexus_banned')) || [];
-        let totalMailsCreated = parseInt(localStorage.getItem('tempnexus_totalMails')) || 0;
-        let visitorLog = JSON.parse(localStorage.getItem('tempnexus_visitors')) || [];
-        let rateLimitData = JSON.parse(localStorage.getItem('tempnexus_rate_limit')) || {};
+  function playAlertSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 587.33;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.25);
+    } catch(e){}
+  }
 
-        let currentIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
-        let isAdminLoggedIn = false;
-        let currentLang = 'en';
+  function showToast(text) {
+    const toast = document.getElementById('toast');
+    toast.innerText = text;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
 
-        // ============================================================
-        // DOM REFS
-        // ============================================================
-        const emailDisplay = document.getElementById('currentEmailDisplay');
-        const mailContainer = document.getElementById('mailListContainer');
-        const inboxCountStat = document.getElementById('inboxCountStat');
-        const expiryStat = document.getElementById('expiryStat');
-        const activeUsersStat = document.getElementById('activeUsersStat');
-        const storageStat = document.getElementById('storageStat');
-        const rateLimitStat = document.getElementById('rateLimitStat');
-        const countdownTimer = document.getElementById('countdownTimer');
-        const composeTo = document.getElementById('composeTo');
-        const composeSubject = document.getElementById('composeSubject');
-        const composeBody = document.getElementById('composeBody');
-        const sendMailBtn = document.getElementById('sendMailBtn');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-        const newInboxBtn = document.getElementById('newInboxBtn');
-        const copyEmailBtn = document.getElementById('copyEmailBtn');
-        const deleteInboxBtn = document.getElementById('deleteInboxBtn');
-        const adminToggle = document.getElementById('adminToggle');
-        const adminModal = document.getElementById('adminModal');
-        const adminClose = document.getElementById('adminClose');
-        const adminLoginSection = document.getElementById('adminLoginSection');
-        const adminDashboard = document.getElementById('adminDashboard');
-        const adminLoginBtn = document.getElementById('adminLoginBtn');
-        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
-        const adminUser = document.getElementById('adminUser');
-        const adminPass = document.getElementById('adminPass');
-        const adminNewPass = document.getElementById('adminNewPass');
-        const adminLoginError = document.getElementById('adminLoginError');
-        const adminSetPassBtn = document.getElementById('adminSetPassBtn');
-        const adminUserTableBody = document.getElementById('adminUserTableBody');
-        const adminTotalUsers = document.getElementById('adminTotalUsers');
-        const adminTotalMails = document.getElementById('adminTotalMails');
-        const adminActiveNow = document.getElementById('adminActiveNow');
-        const adminBannedUsers = document.getElementById('adminBannedUsers');
-        const adminRateLimit = document.getElementById('adminRateLimit');
-        const mailModal = document.getElementById('mailModal');
-        const mailModalClose = document.getElementById('mailModalClose');
-        const modalFrom = document.getElementById('modalFrom');
-        const modalSubject = document.getElementById('modalSubject');
-        const modalDate = document.getElementById('modalDate');
-        const modalBody = document.getElementById('modalBody');
-        const banOverlay = document.getElementById('banOverlay');
+  function toggleTheme() {
+    const isDark = document.body.getAttribute('data-theme') !== 'light';
+    document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  }
 
-        // ============================================================
-        // TRANSLATIONS
-        // ============================================================
-        const translations = {
-            en: { expires: 'Email expires in:', send: 'Send direct email', inbox: 'Incoming messages', empty: 'No messages yet · waiting for incoming mail', copied: 'Email copied!', sent: 'Mail sent to', reply: 'Reply received from', deleted: 'Mail deleted', read: 'Marked as read', newInbox: 'New inbox created!', confirmDelete: 'Delete this inbox and all messages?', ban: 'Banned IP:', unban: 'Unbanned IP:', invalidEmail: 'Please enter a valid email address', recipientRequired: 'Please enter a recipient email', rateLimited: 'Rate limit exceeded. Please wait a moment.', sizeLimit: 'Email size exceeds 1MB limit.', adminWelcome: 'Welcome Admin!', adminLogout: 'Logged out', invalidCreds: 'Invalid credentials', passwordSet: 'Password updated successfully!' },
-            es: { expires: 'El correo expira en:', send: 'Enviar correo directo', inbox: 'Mensajes entrantes', empty: 'Sin mensajes · esperando correo', copied: '¡Correo copiado!', sent: 'Correo enviado a', reply: 'Respuesta recibida de', deleted: 'Correo eliminado', read: 'Marcado como leído', newInbox: '¡Nuevo buzón creado!', confirmDelete: '¿Eliminar este buzón y todos los mensajes?', ban: 'IP baneada:', unban: 'IP desbaneada:', invalidEmail: 'Ingrese un correo válido', recipientRequired: 'Ingrese un destinatario', rateLimited: 'Límite de velocidad excedido. Espere un momento.', sizeLimit: 'El correo excede el límite de 1MB.', adminWelcome: '¡Bienvenido Administrador!', adminLogout: 'Sesión cerrada', invalidCreds: 'Credenciales inválidas', passwordSet: '¡Contraseña actualizada!' },
-            fr: { expires: 'L\'email expire dans:', send: 'Envoyer un email direct', inbox: 'Messages entrants', empty: 'Aucun message · en attente', copied: 'Email copié !', sent: 'Email envoyé à', reply: 'Réponse reçue de', deleted: 'Email supprimé', read: 'Marqué comme lu', newInbox: 'Nouvelle boîte créée !', confirmDelete: 'Supprimer cette boîte et tous les messages ?', ban: 'IP bannie :', unban: 'IP débannie :', invalidEmail: 'Veuillez entrer un email valide', recipientRequired: 'Veuillez entrer un destinataire', rateLimited: 'Limite de débit dépassée. Veuillez patienter.', sizeLimit: 'L\'email dépasse la limite de 1 Mo.', adminWelcome: 'Bienvenue Admin !', adminLogout: 'Déconnexion', invalidCreds: 'Identifiants invalides', passwordSet: 'Mot de passe mis à jour !' },
-            de: { expires: 'E-Mail läuft ab in:', send: 'Direkte E-Mail senden', inbox: 'Eingehende Nachrichten', empty: 'Keine Nachrichten · warte auf E-Mails', copied: 'E-Mail kopiert!', sent: 'E-Mail gesendet an', reply: 'Antwort erhalten von', deleted: 'E-Mail gelöscht', read: 'Als gelesen markiert', newInbox: 'Neues Postfach erstellt!', confirmDelete: 'Dieses Postfach und alle Nachrichten löschen?', ban: 'IP gesperrt:', unban: 'IP entsperrt:', invalidEmail: 'Bitte geben Sie eine gültige E-Mail ein', recipientRequired: 'Bitte geben Sie einen Empfänger ein', rateLimited: 'Grenzwert überschritten. Bitte warten Sie.', sizeLimit: 'E-Mail überschreitet 1MB Grenze.', adminWelcome: 'Willkommen Admin!', adminLogout: 'Abgemeldet', invalidCreds: 'Ungültige Anmeldedaten', passwordSet: 'Passwort aktualisiert!' },
-            zh: { expires: '邮箱过期时间:', send: '发送邮件', inbox: '收件箱', empty: '暂无邮件 · 等待接收', copied: '邮箱已复制！', sent: '邮件已发送至', reply: '收到来自的回复', deleted: '邮件已删除', read: '已标记为已读', newInbox: '新邮箱已创建！', confirmDelete: '删除此邮箱及所有邮件？', ban: '已封禁IP:', unban: '已解封IP:', invalidEmail: '请输入有效的邮箱地址', recipientRequired: '请输入收件人', rateLimited: '频率限制，请稍后再试。', sizeLimit: '邮件大小超过1MB限制。', adminWelcome: '欢迎管理员！', adminLogout: '已登出', invalidCreds: '无效的凭证', passwordSet: '密码已更新！' },
-            ja: { expires: 'メール有効期限:', send: 'メールを送信', inbox: '受信トレイ', empty: 'メッセージはまだありません', copied: 'メールをコピーしました！', sent: 'メールを送信しました', reply: '返信を受信しました', deleted: 'メールを削除しました', read: '既読にしました', newInbox: '新しい受信トレイを作成しました！', confirmDelete: 'この受信トレイを削除しますか？', ban: 'IPをブロックしました:', unban: 'IPのブロックを解除しました:', invalidEmail: '有効なメールアドレスを入力してください', recipientRequired: '受信者を入力してください', rateLimited: 'レート制限を超えました。しばらくお待ちください。', sizeLimit: 'メールサイズが1MBを超えています。', adminWelcome: '管理者ようこそ！', adminLogout: 'ログアウト', invalidCreds: '無効な認証情報', passwordSet: 'パスワードを更新しました！' }
-        };
+  async function loadDomains() {
+    try {
+      const res = await fetch('/api/mailbox?action=getDomains');
+      const data = await res.json();
+      const select = document.getElementById('domain-select');
+      select.innerHTML = data.domains.map(d => `<option value="${d}">@${d}</option>`).join('');
+      document.getElementById('user-fp').innerText = `IP Sync: ${data.fingerprint}`;
+    } catch(e) {
+      showToast('Failed to load domains');
+    }
+  }
 
-        function t(key) {
-            return translations[currentLang]?.[key] || translations.en[key] || key;
+  async function createNewAddress() {
+    const prefix = document.getElementById('custom-prefix').value.trim();
+    const domain = document.getElementById('domain-select').value;
+
+    try {
+      let url = `/api/mailbox?action=generate`;
+      if (prefix) url += `&customName=${encodeURIComponent(prefix)}`;
+      if (domain) url += `&domain=${encodeURIComponent(domain)}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      activeEmail = data.email;
+      localStorage.setItem('kco_email', activeEmail);
+
+      updateAddressDisplay();
+      startPolling();
+      showToast('New temporary email active!');
+    } catch(e) {
+      showToast('Failed to create new address');
+    }
+  }
+
+  function updateAddressDisplay() {
+    document.getElementById('active-email').value = activeEmail;
+    document.getElementById('display-address-lbl').innerText = activeEmail || 'None';
+  }
+
+  function copyEmail() {
+    const val = document.getElementById('active-email').value;
+    if (!val) return;
+    navigator.clipboard.writeText(val);
+    showToast('Copied to clipboard!');
+  }
+
+  async function fetchMessages() {
+    if (!activeEmail) return;
+    document.getElementById('sync-status').innerText = 'Syncing...';
+    try {
+      const res = await fetch(`/api/mailbox?action=getMessages&email=${encodeURIComponent(activeEmail)}`);
+      const data = await res.json();
+
+      if (data.messages) {
+        let hasNew = false;
+        data.messages.forEach(incoming => {
+          if (!cachedMessages.find(m => m.id === incoming.id)) {
+            cachedMessages.unshift({ ...incoming, unread: true, timestamp: Date.now() });
+            hasNew = true;
+          }
+        });
+
+        if (hasNew) {
+          playAlertSound();
+          saveAndRenderMessages();
+          showToast('New email received!');
         }
+      }
+      document.getElementById('sync-status').innerText = 'Connected';
+    } catch(e) {
+      document.getElementById('sync-status').innerText = 'Sync Error';
+    }
+  }
 
-        // ============================================================
-        // UTILITY FUNCTIONS
-        // ============================================================
-        function showToast(msg, icon = 'fa-check-circle') {
-            toastMessage.textContent = msg;
-            toast.querySelector('i').className = 'fas ' + icon;
-            toast.classList.add('show');
-            clearTimeout(toast._hide);
-            toast._hide = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
+  async function openMessage(id) {
+    const msgObj = cachedMessages.find(m => m.id === id);
+    if (msgObj) msgObj.unread = false;
+    saveAndRenderMessages();
 
-        function sanitizeInput(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+    const viewer = document.getElementById('email-viewer');
+    viewer.innerHTML = '<div style="margin: auto;">Loading email content...</div>';
 
-        function validateEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
+    try {
+      const res = await fetch(`/api/mailbox?action=readMessage&email=${encodeURIComponent(activeEmail)}&id=${id}`);
+      const data = await res.json();
+      const msg = data.message;
 
-        function validateSize(content) {
-            return new Blob([content]).size <= CONFIG.EMAIL_SIZE_LIMIT;
-        }
+      let attachmentsHtml = '';
+      if (msg.attachments && msg.attachments.length > 0) {
+        attachmentsHtml = `
+          <div class="attachments">
+            <strong>Attachments (${msg.attachments.length}):</strong><br><br>
+            ${msg.attachments.map(a => `
+              <a class="attachment-item" href="/api/mailbox?action=downloadAttachment&email=${encodeURIComponent(activeEmail)}&id=${id}&filename=${encodeURIComponent(a.filename)}" target="_blank">
+                📎 ${a.filename} (${Math.round(a.size / 1024)} KB)
+              </a>
+            `).join('')}
+          </div>
+        `;
+      }
 
-        function isIPBanned(ip) {
-            return bannedIPs.includes(ip);
-        }
+      viewer.innerHTML = `
+        <div class="email-viewer-header">
+          <h2>${msg.subject || 'No Subject'}</h2>
+          <p style="margin-top: 8px; color: var(--text-muted);"><strong>From:</strong> ${msg.from}</p>
+          <p style="color: var(--text-muted);"><strong>Date:</strong> ${msg.date}</p>
+        </div>
+        <div class="email-body">${msg.htmlBody || msg.body}</div>
+        ${attachmentsHtml}
+      `;
+    } catch(e) {
+      viewer.innerHTML = '<div style="color: var(--danger); margin: auto;">Failed to render email.</div>';
+    }
+  }
 
-        function checkRateLimit(ip) {
-            const now = Date.now();
-            if (!rateLimitData[ip]) {
-                rateLimitData[ip] = { count: 0, reset: now + 60000 };
-            }
-            const data = rateLimitData[ip];
-            if (now > data.reset) {
-                data.count = 0;
-                data.reset = now + 60000;
-            }
-            if (data.count >= CONFIG.RATE_LIMIT) {
-                return false;
-            }
-            data.count += 1;
-            localStorage.setItem('tempnexus_rate_limit', JSON.stringify(rateLimitData));
-            return true;
-        }
+  // Enforces 30-day message auto-purge
+  function purgeExpiredMessages() {
+    const now = Date.now();
+    cachedMessages = cachedMessages.filter(m => (now - (m.timestamp || now)) < THIRTY_DAYS_MS);
+  }
 
-        function generateTempEmail() {
-            const domains = [
-                'tempnexus.com', 'instaddr.io', 'maildrop.cc', 'tempinbox.co',
-                'temp-mail.org', 'tempail.com', 'guerrillamail.com', '10minutemail.com',
-                'mailinator.com', 'yopmail.com'
-            ];
-            const prefix = 'user' + Math.floor(Math.random() * 9000 + 1000);
-            const domain = domains[Math.floor(Math.random() * domains.length)];
-            return `${prefix}@${domain}`;
-        }
+  function saveAndRenderMessages() {
+    purgeExpiredMessages();
+    localStorage.setItem('kco_messages', JSON.stringify(cachedMessages));
+    applyFilter();
+  }
 
-        // ============================================================
-        // USER MANAGEMENT
-        // ============================================================
-        function captureVisitor(ip) {
-            if (!visitorLog.some(v => v.ip === ip)) {
-                visitorLog.push({ ip, firstSeen: new Date().toISOString(), lastSeen: new Date().toISOString() });
-            } else {
-                const visitor = visitorLog.find(v => v.ip === ip);
-                if (visitor) visitor.lastSeen = new Date().toISOString();
-            }
-            localStorage.setItem('tempnexus_visitors', JSON.stringify(visitorLog));
-        }
+  function applyFilter() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    const filtered = cachedMessages.filter(m => 
+      m.from.toLowerCase().includes(query) || 
+      m.subject.toLowerCase().includes(query)
+    );
+    renderList(filtered);
+  }
 
-        function addUser(ip, username = null) {
-            let user = users.find(u => u.ip === ip);
-            if (!user) {
-                user = {
-                    ip: ip,
-                    username: username || 'user_' + ip.split('.').pop(),
-                    mails: 0,
-                    status: 'active',
-                    created: new Date().toISOString()
-                };
-                users.push(user);
-            }
-            user.lastActive = new Date().toISOString();
-            localStorage.setItem('tempnexus_users', JSON.stringify(users));
-            return user;
-        }
+  function renderList(list) {
+    const ul = document.getElementById('email-list');
+    const unread = cachedMessages.filter(m => m.unread).length;
+    document.getElementById('unread-count').innerText = unread;
 
-        function incrementMails(ip) {
-            const user = users.find(u => u.ip === ip);
-            if (user) {
-                user.mails += 1;
-                totalMailsCreated += 1;
-                localStorage.setItem('tempnexus_totalMails', totalMailsCreated);
-                localStorage.setItem('tempnexus_users', JSON.stringify(users));
-            }
-        }
+    if (list.length === 0) {
+      ul.innerHTML = '<li class="email-card">No messages found.</li>';
+      return;
+    }
 
-        // ============================================================
-        // CORE STATE
-        // ============================================================
-        let state = {
-            currentEmail: '',
-            inbox: [],
-            expiryDays: CONFIG.EXPIRY_DAYS,
-            created: Date.now(),
-        };
+    ul.innerHTML = list.map(m => `
+      <li class="email-card ${m.unread ? 'unread' : ''}" onclick="openMessage(${m.id})">
+        <div class="sender">${m.from}</div>
+        <div class="subject">${m.subject || 'No Subject'}</div>
+      </li>
+    `).join('');
+  }
 
-        // ============================================================
-        // MAIL GENERATION - ONLY FOR THE CURRENT USER'S INBOX
-        // ============================================================
-        function generateMockMail(fromOverride = null, subjectOverride = null, bodyOverride = null) {
-            const senders = [
-                'no-reply@instaddr.io', 'support@mailtracking.com', 'notify@socialboost.net',
-                'alerts@tempnexus.com', 'team@instaddr.io', 'admin@mailtracking.co',
-                'service@insta-notify.com', 'updates@temp-mail.org', 'hello@tempail.com',
-                'security@guerrillamail.com', 'noreply@10minutemail.com', 'welcome@temp-mail.org'
-            ];
-            const subjects = [
-                'Your login code', 'Weekly digest', 'New message from InstAddr',
-                'Mailtracking alert', 'Account verification', 'Password reset request',
-                'Welcome to TempNexus', 'Security update', 'You have new followers',
-                'Your inbox is ready', '2FA confirmation', 'New comment on your post',
-                'Your temporary email is active', 'Message from TempMail.org',
-                'Important notification', 'Your account has been created'
-            ];
-            const bodies = [
-                'Here is your verification code: 4821-09A1. Valid for 15 minutes.',
-                'You have 3 new notifications from your connected accounts.',
-                'Someone followed you on InstAddr. Check your profile.',
-                'MailTracking: Your email was opened 2 times on iOS.',
-                'Click the link to verify your temporary email address.\n\nLink: https://tempnexus.com/verify/abc123',
-                'Your session is active. No action needed.',
-                'TempNexus is now integrated with 10+ services.',
-                'Your temporary inbox will expire in 15 days.',
-                'InstAddr: New comment on your photo.',
-                'Mailtracking report: 100% delivery rate.',
-                'Your email has been received and is being processed.',
-                'Welcome to the world of temporary email!',
-                'Thank you for using TempNexus. We hope you enjoy our service.',
-                'Your account has been successfully created. Please confirm your email.',
-                'Security alert: New login detected from an unknown device.',
-                'Your password was successfully changed.'
-            ];
-            const from = fromOverride || senders[Math.floor(Math.random() * senders.length)];
-            const subject = subjectOverride || subjects[Math.floor(Math.random() * subjects.length)];
-            const body = bodyOverride || bodies[Math.floor(Math.random() * bodies.length)];
-            const now = new Date();
-            const date = now.toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' });
-            return {
-                id: Date.now() + '_' + Math.random().toString(36).substring(2, 8),
-                from,
-                subject,
-                body,
-                date,
-                read: false,
-                timestamp: Date.now(),
-            };
-        }
+  function clearCurrentInbox() {
+    cachedMessages = [];
+    saveAndRenderMessages();
+    document.getElementById('email-viewer').innerHTML = '<div style="text-align: center; color: var(--text-muted); margin: auto;">Inbox cleared.</div>';
+    showToast('Local inbox cleared');
+  }
 
-        // ============================================================
-        // RENDER FUNCTIONS
-        // ============================================================
-        function renderInbox() {
-            if (!state.inbox.length) {
-                mailContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-mail-bulk"></i>
-                        <p>${t('empty')}</p>
-                    </div>
-                `;
-                return;
-            }
-            let html = '';
-            state.inbox.forEach((mail) => {
-                const readIcon = mail.read ? 'fa-envelope-open' : 'fa-envelope';
-                const readColor = mail.read ? '#6679b3' : '#b8ccff';
-                const itemClass = mail.read ? 'mail-item read' : 'mail-item unread';
-                html += `
-                    <div class="${itemClass}" data-mail-id="${mail.id}">
-                        <div class="mail-info" onclick="window._openMail('${mail.id}')">
-                            <div class="from"><i class="fas ${readIcon}" style="color:${readColor}"></i> ${sanitizeInput(mail.from)}</div>
-                            <div class="subject">${sanitizeInput(mail.subject)}</div>
-                            <div class="date"><i class="far fa-clock"></i> ${mail.date}</div>
-                        </div>
-                        <div class="mail-actions">
-                            <button class="btn-icon read-toggle" data-id="${mail.id}"><i class="fas fa-check-circle"></i> Read</button>
-                            <button class="btn-icon delete-mail" data-id="${mail.id}"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            mailContainer.innerHTML = html;
+  function manualRefresh() {
+    fetchMessages();
+    showToast('Syncing inbox...');
+  }
 
-            document.querySelectorAll('.mail-item .mail-info').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    const mailItem = this.closest('.mail-item');
-                    const id = mailItem.dataset.mailId;
-                    openMailModal(id);
-                    e.stopPropagation();
-                });
-            });
+  function startPolling() {
+    if (syncTimer) clearInterval(syncTimer);
+    fetchMessages();
+    syncTimer = setInterval(fetchMessages, 4000);
+  }
 
-            document.querySelectorAll('.read-toggle').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const id = this.dataset.id;
-                    const mail = state.inbox.find(m => m.id === id);
-                    if (mail) {
-                        mail.read = true;
-                        renderInbox();
-                        showToast(t('read'), 'fa-check');
-                    }
-                    e.stopPropagation();
-                });
-            });
+  window.onload = async () => {
+    await loadDomains();
 
-            document.querySelectorAll('.delete-mail').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const id = this.dataset.id;
-                    state.inbox = state.inbox.filter(m => m.id !== id);
-                    renderInbox();
-                    updatePublicStats();
-                    showToast(t('deleted'), 'fa-trash-alt');
-                    e.stopPropagation();
-                });
-            });
-        }
+    if (activeEmail) {
+      updateAddressDisplay();
+      startPolling();
+    } else {
+      await createNewAddress();
+    }
 
-        function updatePublicStats() {
-            inboxCountStat.textContent = state.inbox.length;
-            const expiryDate = new Date(state.created);
-            expiryDate.setDate(expiryDate.getDate() + state.expiryDays);
-            const now = new Date();
-            const diff = expiryDate - now;
-            
-            if (diff <= 0) {
-                countdownTimer.textContent = 'Expired';
-                countdownTimer.className = 'countdown danger';
-            } else {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                countdownTimer.textContent = `${days}d ${hours}h ${mins}m`;
-                countdownTimer.className = 'countdown' + (diff < 86400000 * 2 ? ' warning' : '');
-            }
-            
-            activeUsersStat.textContent = users.length;
-            const approxBytes = state.inbox.reduce((acc, m) => acc + (m.body?.length || 0) + (m.subject?.length || 0), 0);
-            const kb = (approxBytes / 1024).toFixed(1);
-            storageStat.textContent = kb + ' KB';
-            rateLimitStat.textContent = CONFIG.RATE_LIMIT + '/min';
-        }
-
-        // ============================================================
-        // MAIL MODAL - SHOWS FULL EMAIL CONTENT
-        // ============================================================
-        function openMailModal(mailId) {
-            const mail = state.inbox.find(m => m.id === mailId);
-            if (!mail) {
-                showToast('Mail not found', 'fa-exclamation-triangle');
-                return;
-            }
-            mail.read = true;
-            renderInbox();
-            
-            // Display full email content
-            modalFrom.textContent = mail.from;
-            modalSubject.textContent = mail.subject;
-            modalDate.textContent = mail.date;
-            modalBody.textContent = mail.body || 'No content available.';
-            
-            mailModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMailModal() {
-            mailModal.classList.remove('show');
-            document.body.style.overflow = 'auto';
-        }
-
-        // ============================================================
-        // CORE ACTIONS
-        // ============================================================
-        function createNewInbox() {
-            if (!checkRateLimit(currentIP)) {
-                showToast(t('rateLimited'), 'fa-exclamation-triangle');
-                return;
-            }
-            state.inbox = [];
-            state.currentEmail = generateTempEmail();
-            state.created = Date.now();
-            emailDisplay.textContent = state.currentEmail;
-            renderInbox();
-            updatePublicStats();
-            
-            const welcome = {
-                id: 'welcome_' + Date.now(),
-                from: 'welcome@tempnexus.com',
-                subject: 'Your temporary inbox is active',
-                body: 'Welcome to TempNexus!\n\n✅ Secure & Private\n✅ Rate Limited (60/min)\n✅ XSS Protected\n✅ 16+ Languages\n\nClick on any email to view its full content.\n\nYour email will auto-delete after 15 days.',
-                date: new Date().toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }),
-                read: false,
-                timestamp: Date.now(),
-            };
-            state.inbox.unshift(welcome);
-            renderInbox();
-            updatePublicStats();
-            showToast(t('newInbox'), 'fa-sync-alt');
-        }
-
-        function copyEmail() {
-            if (!state.currentEmail) return;
-            navigator.clipboard?.writeText(state.currentEmail).then(() => {
-                showToast(t('copied'), 'fa-copy');
-            }).catch(() => {
-                const input = document.createElement('input');
-                input.value = state.currentEmail;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
-                showToast(t('copied'), 'fa-copy');
-            });
-        }
-
-        function deleteInbox() {
-            if (confirm(t('confirmDelete'))) {
-                createNewInbox();
-                showToast('Inbox deleted, new one created', 'fa-trash-alt');
-            }
-        }
-
-        function sendDirectMail() {
-            const to = composeTo.value.trim();
-            const subject = composeSubject.value.trim() || '(no subject)';
-            const body = composeBody.value.trim() || '(empty message)';
-
-            if (!to) {
-                showToast(t('recipientRequired'), 'fa-exclamation-triangle');
-                return;
-            }
-            if (!validateEmail(to)) {
-                showToast(t('invalidEmail'), 'fa-exclamation-triangle');
-                return;
-            }
-            if (!validateSize(body)) {
-                showToast(t('sizeLimit'), 'fa-exclamation-triangle');
-                return;
-            }
-            if (!checkRateLimit(currentIP)) {
-                showToast(t('rateLimited'), 'fa-exclamation-triangle');
-                return;
-            }
-
-            const sentMail = {
-                id: 'sent_' + Date.now(),
-                from: state.currentEmail || 'you@tempnexus.com',
-                subject: '📤 Sent: ' + sanitizeInput(subject),
-                body: `To: ${to}\n\n${sanitizeInput(body)}`,
-                date: new Date().toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }),
-                read: false,
-                timestamp: Date.now(),
-            };
-            state.inbox.unshift(sentMail);
-            renderInbox();
-            updatePublicStats();
-            
-            const user = users.find(u => u.ip === currentIP);
-            if (user) {
-                user.mails += 1;
-                totalMailsCreated += 1;
-                localStorage.setItem('tempnexus_totalMails', totalMailsCreated);
-                localStorage.setItem('tempnexus_users', JSON.stringify(users));
-            }
-
-            setTimeout(() => {
-                const reply = generateMockMail(
-                    to,
-                    'Re: ' + subject,
-                    `This is an automated reply from ${to}.\n\nThank you for your message via TempNexus.\n\n- ${to} (simulated)\n\nTimestamp: ${new Date().toISOString()}`
-                );
-                state.inbox.unshift(reply);
-                renderInbox();
-                updatePublicStats();
-                showToast(t('reply') + ' ' + to, 'fa-reply');
-            }, 2500);
-
-            composeTo.value = '';
-            composeSubject.value = '';
-            composeBody.value = '';
-            showToast(t('sent') + ' ' + to, 'fa-paper-plane');
-        }
-
-        // ============================================================
-        // ADMIN FUNCTIONS
-        // ============================================================
-        function renderAdminUserTable() {
-            if (!adminUserTableBody) return;
-            if (users.length === 0) {
-                adminUserTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#5d73a8;padding:1.5rem;">No users yet</td></tr>`;
-                return;
-            }
-            let html = '';
-            users.forEach(user => {
-                const isBanned = bannedIPs.includes(user.ip);
-                const status = isBanned ? 'banned' : 'active';
-                html += `
-                    <tr>
-                        <td><code style="background:rgba(0,0,0,0.3);padding:0.15rem 0.5rem;border-radius:10px;font-size:0.8rem;">${user.ip}</code></td>
-                        <td>${user.username || '—'}</td>
-                        <td>${user.mails || 0}</td>
-                        <td><span class="status-badge ${status}">${status}</span></td>
-                        <td>
-                            ${isBanned 
-                                ? `<button class="btn-sm unban" data-ip="${user.ip}"><i class="fas fa-check"></i> Unban</button>`
-                                : `<button class="btn-sm ban" data-ip="${user.ip}"><i class="fas fa-ban"></i> Ban</button>`
-                            }
-                        </td>
-                    </tr>
-                `;
-            });
-            adminUserTableBody.innerHTML = html;
-
-            document.querySelectorAll('#adminUserTableBody .btn-sm.ban').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const ip = this.dataset.ip;
-                    banUser(ip);
-                });
-            });
-            document.querySelectorAll('#adminUserTableBody .btn-sm.unban').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const ip = this.dataset.ip;
-                    unbanUser(ip);
-                });
-            });
-        }
-
-        function banUser(ip) {
-            if (!bannedIPs.includes(ip)) {
-                bannedIPs.push(ip);
-                const user = users.find(u => u.ip === ip);
-                if (user) user.status = 'banned';
-                localStorage.setItem('tempnexus_banned', JSON.stringify(bannedIPs));
-                localStorage.setItem('tempnexus_users', JSON.stringify(users));
-                renderAdminUserTable();
-                updateAdminStats();
-                showToast(t('ban') + ' ' + ip, 'fa-ban');
-                if (currentIP === ip) {
-                    banOverlay.classList.add('show');
-                }
-            }
-        }
-
-        function unbanUser(ip) {
-            bannedIPs = bannedIPs.filter(b => b !== ip);
-            const user = users.find(u => u.ip === ip);
-            if (user) user.status = 'active';
-            localStorage.setItem('tempnexus_banned', JSON.stringify(bannedIPs));
-            localStorage.setItem('tempnexus_users', JSON.stringify(users));
-            renderAdminUserTable();
-            updateAdminStats();
-            showToast(t('unban') + ' ' + ip, 'fa-check');
-            if (currentIP === ip) {
-                banOverlay.classList.remove('show');
-            }
-        }
-
-        function updateAdminStats() {
-            const activeUsers = users.filter(u => u.status === 'active').length;
-            const bannedCount = bannedIPs.length;
-            adminTotalUsers.textContent = users.length;
-            adminTotalMails.textContent = totalMailsCreated;
-            adminBannedUsers.textContent = bannedCount;
-            adminRateLimit.textContent = CONFIG.RATE_LIMIT + '/min';
-            
-            const now = new Date();
-            const activeNow = users.filter(u => {
-                if (!u.lastActive) return false;
-                const last = new Date(u.lastActive);
-                return (now - last) < 300000 && u.status === 'active';
-            }).length;
-            adminActiveNow.textContent = activeNow;
-        }
-
-        function adminLogin() {
-            const username = adminUser.value.trim();
-            const password = adminPass.value.trim();
-            const storedPass = CONFIG.ADMIN_PASSWORD;
-
-            if (username === 'admin' && password === storedPass) {
-                adminLoginError.style.display = 'none';
-                adminLoginSection.style.display = 'none';
-                adminDashboard.style.display = 'block';
-                isAdminLoggedIn = true;
-                addUser(currentIP, 'admin');
-                renderAdminUserTable();
-                updateAdminStats();
-                showToast(t('adminWelcome'), 'fa-shield-alt');
-                sessionStorage.setItem('tempnexus_admin_session', 'true');
-            } else {
-                adminLoginError.style.display = 'block';
-                setTimeout(() => { adminLoginError.style.display = 'none'; }, 3000);
-            }
-        }
-
-        function adminLogout() {
-            adminLoginSection.style.display = 'flex';
-            adminDashboard.style.display = 'none';
-            isAdminLoggedIn = false;
-            sessionStorage.removeItem('tempnexus_admin_session');
-            showToast(t('adminLogout'), 'fa-sign-out-alt');
-        }
-
-        function setAdminPassword() {
-            const newPass = adminNewPass.value.trim();
-            if (newPass.length < 4) {
-                showToast('Password must be at least 4 characters', 'fa-exclamation-triangle');
-                return;
-            }
-            localStorage.setItem('tempnexus_admin_password', newPass);
-            CONFIG.ADMIN_PASSWORD = newPass;
-            showToast(t('passwordSet'), 'fa-check');
-            adminNewPass.value = '';
-        }
-
-        // ============================================================
-        // MODAL CONTROLS
-        // ============================================================
-        function openAdminModal() {
-            adminModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            if (sessionStorage.getItem('tempnexus_admin_session') === 'true') {
-                adminLoginSection.style.display = 'none';
-                adminDashboard.style.display = 'block';
-                isAdminLoggedIn = true;
-                renderAdminUserTable();
-                updateAdminStats();
-            } else {
-                adminLoginSection.style.display = 'flex';
-                adminDashboard.style.display = 'none';
-                isAdminLoggedIn = false;
-            }
-        }
-
-        function closeAdminModal() {
-            adminModal.classList.remove('show');
-            document.body.style.overflow = 'auto';
-        }
-
-        // ============================================================
-        // LANGUAGE SUPPORT
-        // ============================================================
-        function updateLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('timerLabel').textContent = t('expires');
-            document.getElementById('composeLabel').textContent = t('send');
-            document.getElementById('inboxLabel').textContent = t('inbox');
-            document.getElementById('emptyMessage').textContent = t('empty');
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-        }
-
-        // ============================================================
-        // MAIL SIMULATION - ONLY FOR CURRENT USER
-        // ============================================================
-        let mailInterval = null;
-
-        function startMailSimulation() {
-            if (mailInterval) clearInterval(mailInterval);
-            mailInterval = setInterval(() => {
-                // Only generate emails if we have a valid email and user is not banned
-                if (state.currentEmail && !isIPBanned(currentIP)) {
-                    if (!checkRateLimit(currentIP)) {
-                        return;
-                    }
-                    const count = Math.random() > 0.7 ? 2 : 1;
-                    for (let i = 0; i < count; i++) {
-                        const newMail = generateMockMail();
-                        state.inbox.unshift(newMail);
-                        const user = users.find(u => u.ip === currentIP);
-                        if (user) {
-                            user.mails += 1;
-                            totalMailsCreated += 1;
-                            localStorage.setItem('tempnexus_totalMails', totalMailsCreated);
-                            localStorage.setItem('tempnexus_users', JSON.stringify(users));
-                        }
-                    }
-                    if (state.inbox.length > CONFIG.MAX_INBOX_SIZE) {
-                        state.inbox = state.inbox.slice(0, CONFIG.MAX_INBOX_SIZE);
-                    }
-                    renderInbox();
-                    updatePublicStats();
-                }
-            }, 14000 + Math.floor(Math.random() * 10000));
-        }
-
-        // ============================================================
-        // INIT
-        // ============================================================
-        function init() {
-            // Check ban
-            if (isIPBanned(currentIP)) {
-                banOverlay.classList.add('show');
-            }
-
-            // Track visitor
-            captureVisitor(currentIP);
-            addUser(currentIP);
-
-            // Initialize email
-            state.currentEmail = generateTempEmail();
-            emailDisplay.textContent = state.currentEmail;
-            state.created = Date.now();
-
-            // Add welcome email
-            const welcome = {
-                id: 'welcome_' + Date.now(),
-                from: 'hello@tempnexus.com',
-                subject: 'Your inbox is ready',
-                body: 'Welcome to TempNexus!\n\n🔒 Secure & Private\n⚡ Rate Limited (60/min)\n🛡️ XSS Protected\n🌍 16+ Languages\n\nClick on any email to view its full content.\n\nYour email will auto-delete after 15 days.',
-                date: new Date().toLocaleString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }),
-                read: false,
-                timestamp: Date.now(),
-            };
-            state.inbox.unshift(welcome);
-            renderInbox();
-            updatePublicStats();
-
-            // Start simulation
-            startMailSimulation();
-
-            // Event listeners
-            newInboxBtn.addEventListener('click', createNewInbox);
-            copyEmailBtn.addEventListener('click', copyEmail);
-            deleteInboxBtn.addEventListener('click', deleteInbox);
-            sendMailBtn.addEventListener('click', sendDirectMail);
-
-            composeTo.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendDirectMail(); });
-            composeSubject.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendDirectMail(); });
-            composeBody.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDirectMail(); } });
-
-            // Mail modal
-            mailModalClose.addEventListener('click', closeMailModal);
-            mailModal.addEventListener('click', function(e) {
-                if (e.target === this) closeMailModal();
-            });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && mailModal.classList.contains('show')) closeMailModal();
-                if (e.key === 'Escape' && adminModal.classList.contains('show')) closeAdminModal();
-            });
-
-            // Admin modal
-            adminToggle.addEventListener('click', openAdminModal);
-            adminClose.addEventListener('click', closeAdminModal);
-            adminModal.addEventListener('click', function(e) {
-                if (e.target === this) closeAdminModal();
-            });
-
-            adminLoginBtn.addEventListener('click', adminLogin);
-            adminLogoutBtn.addEventListener('click', adminLogout);
-            adminSetPassBtn.addEventListener('click', setAdminPassword);
-
-            adminUser.addEventListener('keydown', (e) => { if (e.key === 'Enter') adminLogin(); });
-            adminPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') adminLogin(); });
-
-            // Language buttons
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    updateLanguage(this.dataset.lang);
-                });
-            });
-
-            // Expose functions
-            window._openMail = openMailModal;
-
-            // Periodic updates
-            setInterval(() => {
-                updatePublicStats();
-                if (isAdminLoggedIn) updateAdminStats();
-            }, 10000);
-
-            // Cross-tab sync
-            setInterval(() => {
-                const newUsers = JSON.parse(localStorage.getItem('tempnexus_users')) || [];
-                if (JSON.stringify(newUsers) !== JSON.stringify(users)) {
-                    users = newUsers;
-                    if (isAdminLoggedIn) {
-                        renderAdminUserTable();
-                        updateAdminStats();
-                    }
-                }
-                const newBanned = JSON.parse(localStorage.getItem('tempnexus_banned')) || [];
-                if (JSON.stringify(newBanned) !== JSON.stringify(bannedIPs)) {
-                    bannedIPs = newBanned;
-                    if (isIPBanned(currentIP)) {
-                        banOverlay.classList.add('show');
-                    } else {
-                        banOverlay.classList.remove('show');
-                    }
-                    if (isAdminLoggedIn) {
-                        renderAdminUserTable();
-                        updateAdminStats();
-                    }
-                }
-            }, 5000);
-
-            // Auto-expiry check
-            setInterval(() => {
-                const expiryDate = new Date(state.created);
-                expiryDate.setDate(expiryDate.getDate() + state.expiryDays);
-                if (new Date() > expiryDate) {
-                    createNewInbox();
-                    showToast('Email expired. New inbox created.', 'fa-clock');
-                }
-            }, 60000);
-
-            console.log('✅ TempNexus initialized successfully');
-            console.log('📧 Email:', state.currentEmail);
-            console.log('🔒 Rate Limit:', CONFIG.RATE_LIMIT, 'emails/min');
-        }
-
-        init();
-    })();
+    saveAndRenderMessages();
+  };
 </script>
 </body>
 </html>
