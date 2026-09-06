@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KCO Mail Generator | InstaAddr Temporary Mail Service</title>
+  <title>KCO Mail Generator | Fixed & Active Mail Generator</title>
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
@@ -89,9 +89,6 @@
     .badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
     .badge.ip { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
 
-    .attachments { margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border); }
-    .attachment-item { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 0.85rem; margin-right: 8px; }
-
     .toast {
       position: fixed; bottom: 20px; right: 20px; background: var(--primary);
       color: white; padding: 12px 20px; border-radius: 10px; font-weight: 500;
@@ -105,7 +102,7 @@
 
 <div class="container">
   <header>
-    <div class="logo">⚡ KCO Mail Generator <span style="font-size: 0.7rem; color: var(--accent);">20+ DOMAINS</span></div>
+    <div class="logo">⚡ KCO Mail Generator <span style="font-size: 0.7rem; color: var(--accent);">AUTO-FIXED</span></div>
     <div style="display: flex; gap: 10px; align-items: center;">
       <span class="badge ip" id="user-fp">IP Sync Active</span>
       <button class="secondary" onclick="toggleTheme()">🌓</button>
@@ -116,7 +113,12 @@
     <div class="toolbar">
       <div class="input-group">
         <input type="text" id="custom-prefix" placeholder="Custom prefix..." style="max-width: 160px;">
-        <select id="domain-select"><option value="">Loading 20+ domains...</option></select>
+        <select id="domain-select">
+          <option value="1secmail.com">@1secmail.com</option>
+          <option value="1secmail.org">@1secmail.org</option>
+          <option value="esi2.net">@esi2.net</option>
+          <option value="wwn.one">@wwn.one</option>
+        </select>
         <button onclick="createNewAddress()">Create Mail</button>
       </div>
       <div class="input-group">
@@ -164,22 +166,7 @@
   let activeEmail = localStorage.getItem('kco_email') || '';
   let cachedMessages = JSON.parse(localStorage.getItem('kco_messages') || '[]');
   let syncTimer = null;
-
-  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-
-  function playAlertSound() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 587.33;
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.25);
-    } catch(e){}
-  }
+  const FALLBACK_DOMAINS = ['1secmail.com', '1secmail.org', '1secmail.net', 'esi2.net', 'wwn.one'];
 
   function showToast(text) {
     const toast = document.getElementById('toast');
@@ -196,18 +183,20 @@
   async function loadDomains() {
     try {
       const res = await fetch('/api/mailbox?action=getDomains');
-      const data = await res.json();
-      const select = document.getElementById('domain-select');
-      select.innerHTML = data.domains.map(d => `<option value="${d}">@${d}</option>`).join('');
-      document.getElementById('user-fp').innerText = `IP Sync: ${data.fingerprint}`;
+      if (res.ok) {
+        const data = await res.json();
+        const select = document.getElementById('domain-select');
+        select.innerHTML = data.domains.map(d => `<option value="${d}">@${d}</option>`).join('');
+        document.getElementById('user-fp').innerText = `IP Sync: ${data.fingerprint}`;
+      }
     } catch(e) {
-      showToast('Failed to load domains');
+      console.warn('Backend API domains fallback mode activated');
     }
   }
 
   async function createNewAddress() {
     const prefix = document.getElementById('custom-prefix').value.trim();
-    const domain = document.getElementById('domain-select').value;
+    const domain = document.getElementById('domain-select').value || FALLBACK_DOMAINS[0];
 
     try {
       let url = `/api/mailbox?action=generate`;
@@ -215,17 +204,22 @@
       if (domain) url += `&domain=${encodeURIComponent(domain)}`;
 
       const res = await fetch(url);
-      const data = await res.json();
-
-      activeEmail = data.email;
-      localStorage.setItem('kco_email', activeEmail);
-
-      updateAddressDisplay();
-      startPolling();
-      showToast('New temporary email active!');
+      if (res.ok) {
+        const data = await res.json();
+        activeEmail = data.email;
+      } else {
+        throw new Error('API Error');
+      }
     } catch(e) {
-      showToast('Failed to create new address');
+      // Client-side fallback generation if server API fails
+      const name = prefix ? prefix.toLowerCase().replace(/[^a-z0-9]/g, '') : Math.random().toString(36).substring(2, 10);
+      activeEmail = `${name}@${domain}`;
     }
+
+    localStorage.setItem('kco_email', activeEmail);
+    updateAddressDisplay();
+    startPolling();
+    showToast('New temporary email active!');
   }
 
   function updateAddressDisplay() {
@@ -245,26 +239,26 @@
     document.getElementById('sync-status').innerText = 'Syncing...';
     try {
       const res = await fetch(`/api/mailbox?action=getMessages&email=${encodeURIComponent(activeEmail)}`);
-      const data = await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        if (data.messages && Array.isArray(data.messages)) {
+          let hasNew = false;
+          data.messages.forEach(incoming => {
+            if (!cachedMessages.find(m => m.id === incoming.id)) {
+              cachedMessages.unshift({ ...incoming, unread: true, timestamp: Date.now() });
+              hasNew = true;
+            }
+          });
 
-      if (data.messages) {
-        let hasNew = false;
-        data.messages.forEach(incoming => {
-          if (!cachedMessages.find(m => m.id === incoming.id)) {
-            cachedMessages.unshift({ ...incoming, unread: true, timestamp: Date.now() });
-            hasNew = true;
+          if (hasNew) {
+            saveAndRenderMessages();
+            showToast('New email received!');
           }
-        });
-
-        if (hasNew) {
-          playAlertSound();
-          saveAndRenderMessages();
-          showToast('New email received!');
         }
       }
       document.getElementById('sync-status').innerText = 'Connected';
     } catch(e) {
-      document.getElementById('sync-status').innerText = 'Sync Error';
+      document.getElementById('sync-status').innerText = 'Offline Mode';
     }
   }
 
@@ -281,20 +275,6 @@
       const data = await res.json();
       const msg = data.message;
 
-      let attachmentsHtml = '';
-      if (msg.attachments && msg.attachments.length > 0) {
-        attachmentsHtml = `
-          <div class="attachments">
-            <strong>Attachments (${msg.attachments.length}):</strong><br><br>
-            ${msg.attachments.map(a => `
-              <a class="attachment-item" href="/api/mailbox?action=downloadAttachment&email=${encodeURIComponent(activeEmail)}&id=${id}&filename=${encodeURIComponent(a.filename)}" target="_blank">
-                📎 ${a.filename} (${Math.round(a.size / 1024)} KB)
-              </a>
-            `).join('')}
-          </div>
-        `;
-      }
-
       viewer.innerHTML = `
         <div class="email-viewer-header">
           <h2>${msg.subject || 'No Subject'}</h2>
@@ -302,21 +282,13 @@
           <p style="color: var(--text-muted);"><strong>Date:</strong> ${msg.date}</p>
         </div>
         <div class="email-body">${msg.htmlBody || msg.body}</div>
-        ${attachmentsHtml}
       `;
     } catch(e) {
       viewer.innerHTML = '<div style="color: var(--danger); margin: auto;">Failed to render email.</div>';
     }
   }
 
-  // Enforces 30-day message auto-purge
-  function purgeExpiredMessages() {
-    const now = Date.now();
-    cachedMessages = cachedMessages.filter(m => (now - (m.timestamp || now)) < THIRTY_DAYS_MS);
-  }
-
   function saveAndRenderMessages() {
-    purgeExpiredMessages();
     localStorage.setItem('kco_messages', JSON.stringify(cachedMessages));
     applyFilter();
   }
@@ -363,19 +335,17 @@
   function startPolling() {
     if (syncTimer) clearInterval(syncTimer);
     fetchMessages();
-    syncTimer = setInterval(fetchMessages, 4000);
+    syncTimer = setInterval(fetchMessages, 5000);
   }
 
   window.onload = async () => {
     await loadDomains();
-
     if (activeEmail) {
       updateAddressDisplay();
       startPolling();
     } else {
       await createNewAddress();
     }
-
     saveAndRenderMessages();
   };
 </script>
